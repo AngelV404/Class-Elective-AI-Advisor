@@ -60,7 +60,7 @@ CREATE TABLE Section (
     Course_id INT,
     Instructor VARCHAR(255) NOT NULL,
     Capacity INT,
-    Registered INT CHECK(Registered < Capacity),
+    Registered INT CHECK(Registered <= Capacity),
     Waitlist INT,
     PRIMARY KEY (Section_num, Course_id),
     FOREIGN KEY (Course_id) REFERENCES Course(ID)

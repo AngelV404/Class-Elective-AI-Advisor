@@ -30,7 +30,7 @@ INSERT INTO "User" (username, Email, Hashed_Pw, Degree) VALUES
 
 -- Prerequisites
 INSERT INTO Prerequisites (prereq_id, course_id) VALUES
-(102, 101),
-(103, 102),
-(104, 103),
-(202, 201);
+(101, 102),
+(102, 103),
+(103, 104),
+(201, 202);

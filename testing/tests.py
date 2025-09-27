@@ -55,11 +55,39 @@ def sv03(cursor):
         cursor.execute("INSERT INTO 'User' (id, username, degree, email, hashed_pw) VALUES (1000, 'Test User2', 1, 'duplicate@email.com', 'abc123');")
         print("Insertion successful")
     except sqlite3.Error as e:
-        print(f"SQLite Error: {e}")
+        print(f"SQL Error: {e}")
 
 def sv04(cursor):
     try:
         cursor.execute("INSERT INTO Course (Code, Name, credits, department) VALUES (102,NULL, 4,'Computer Science');")
         print("Insertion Successful")
     except sqlite3.Error as e:
-        print(f"SQLite Error: {e}")
+        print(f"SQL Error: {e}")
+
+def di01(cursor):
+    try:
+        cursor.execute("INSERT INTO DG_Requirements ('Degree_ID','Course','Type') VALUES (9999,'104','Core_Upper')")
+        print("Insertion Successful")
+    except sqlite3.Error as e:
+        print(f"SQL Error:  {e}")
+
+def di02(cursor):
+    try:
+        cursor.execute("INSERT INTO Prerequisites ('Course_ID','Prereq_ID') VALUES (102,101)")
+        print("Insertion Successful")
+    except sqlite3.Error as e:
+        print(f"SQL Error:  {e}")
+
+def di03(cursor):
+    try:
+        cursor.execute("UPDATE section SET registered = 33, waitlist = 1 WHERE section_num = 2 AND course_id = 101")
+        print("Insertion Successful")
+    except sqlite3.Error as e:
+        print(f"SQL Error:  {e}")
+
+def di04(cursor):
+    try:
+        cursor.execute("INSERT INTO Timeslots ('Section_ID','Course_ID','Day','Start_time','End_Time','Building','Room') VALUES (9999,9999,'Mon/Wed/Fri', '10:00:00', '11:50:00','Engineering','204')")
+        print("Insertion Successful")
+    except sqlite3.Error as e:
+        print(f"SQL Error:  {e}")
