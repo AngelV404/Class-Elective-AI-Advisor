@@ -144,7 +144,8 @@ CREATE TABLE GE_Requirements (
 CREATE TABLE Taken (
     User_ID INTEGER NOT NULL,
     Course_ID INT NOT NULL,
-	Status VARCHAR(255) CHECK(status IN ('wishlist','taken')),
+    Section_ID INT,
+	Status VARCHAR(255) CHECK(status IN ('wishlist','taken', "in-progress")),
     PRIMARY KEY (User_ID, Course_ID),
     FOREIGN KEY (User_ID) REFERENCES User(ID)
         ON UPDATE CASCADE

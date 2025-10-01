@@ -74,5 +74,25 @@ tests.di03(cursor)
 print("\nTest Case DI-04")
 tests.di04(cursor)
 
+# Test Case FT-01
+# EXPECTED: Table of all required courses for Computer Science Degree
+print("\nTest Case FT-01")
+tests.ft01(cursor)
+
+# Test Case FT-02
+# EXPECTED: Table of all users enrolled in CS301-01
+print("\nTest Case FT-02")
+tests.ft02(cursor)
+
+# Test Case FT-03
+# EXPECTED: Table of all users enrolled in CS301-01
+print("\nTest Case FT-03")
+tests.ft03(cursor)
+
+# Test Case FT-04
+# EXPECTED: Table of all ge_requirements for each degree
+print("\nTest Case FT-04")
+tests.ft04(cursor)
+
 if con:
     con.close()
