@@ -1,6 +1,6 @@
 import tkinter as tk
-from LoginFrame import LoginFrame
-from HomeFrame import HomeFrame
+from .LoginFrame import LoginFrame
+from .HomeFrame import HomeFrame
 # from HelpFrame import HelpFrame
 # from PreferencesFrame import PreferencesFrame
 # from ProfileFrame import ProfileFrame

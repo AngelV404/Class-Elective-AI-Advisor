@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 from auth.auth_provider import AuthError
 from auth.local_auth import LocalAuthProvider
-
+import ui.gui
 
 def get_provider():
     backend = os.getenv("AUTH_BACKEND", "local").lower()
@@ -62,6 +62,9 @@ def build_form():
             result = provider.authenticate_user(email_entry.get(), pw_entry.get())
             messagebox.showinfo("Welcome", f"Welcome {result['user']['full_name']}!")
             print(result)
+            root.destroy()
+            app = ui.gui.App()
+            app.mainloop()
         except AuthError as e:
             messagebox.showerror("Login error", str(e))
 
