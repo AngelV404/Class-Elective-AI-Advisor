@@ -1,5 +1,6 @@
 import tkinter as tk
-from .LoginFrame import LoginFrame
+from db import dbsetup
+from .CourseFrame import *
 from .HomeFrame import HomeFrame
 # from HelpFrame import HelpFrame
 # from PreferencesFrame import PreferencesFrame
@@ -26,7 +27,7 @@ class App(tk.Tk):
         tk.Button(self.sidebar, text="Home", relief="solid", highlightbackground="navy", highlightthickness=1, bg="white", activebackground="orange",
                   command=lambda: self.show_frame("Home")).pack(fill="both", expand=True,  pady=(0, 20), padx=(0, 20))
         tk.Button(self.sidebar, text="Login", relief="solid", bd=1, highlightbackground="navy", highlightthickness=2, bg="white", activebackground="orange",
-                  command=lambda: self.show_frame("Login")).pack(fill="both", expand=True, pady=(0, 20), padx=(0, 20))
+                  command=lambda: self.show_frame("Courses")).pack(fill="both", expand=True, pady=(0, 20), padx=(0, 20))
         tk.Button(self.sidebar, text="Preferences", relief="solid", bd=1, highlightbackground="navy", highlightthickness=2, bg="white", activebackground="orange",
                   command=lambda: self.show_frame("Preferences")).pack(fill="both", expand=True, pady=(0, 20), padx=(0, 20))
         tk.Button(self.sidebar, text="Recommended", relief="solid", bd=1, highlightbackground="navy", highlightthickness=2, bg="white", activebackground="orange",
@@ -40,11 +41,14 @@ class App(tk.Tk):
         self.content = tk.Frame(self.main_frame, bg="white")
         self.content.pack(expand=True, fill="both",padx=2,pady=2)
 
+        # Setup db
+        dbsetup.connectdb()
 
         # Load frames
         self.frames = {
-            "Login": LoginFrame(self.content, self),
-            "Home": HomeFrame(self.content, self)
+            "Courses": CourseFrame(self.content, self),
+            "Home": HomeFrame(self.content, self),
+            "Results": ResultFrame(self.content, self)
             # "Help": HelpFrame(self.content, self),
             # "Profile": ProfileFrame(self.content, self),
             # "Recommended": RecommendedFrame(self.content, self),
@@ -61,6 +65,10 @@ class App(tk.Tk):
         frame.tkraise()
 
 
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+# if __name__ == "__main__":
+#     app = App()
+#     app.mainloop()
+
+
+app = App()
+app.mainloop()
