@@ -5,13 +5,13 @@ INSERT INTO Degree (id, name, level) VALUES
 (3, 'Data Science M.S.', 'Master');
 
 -- Courses
-INSERT INTO Course (id, code, name, credits, Department) VALUES
-(101, 'CPSC101', 'Intro to Programming', 3, 'Computer Science'),
-(102, 'CPSC201', 'Data Structures', 4, 'Computer Science'),
-(103, 'CPSC301', 'Algorithms', 4, 'Computer Science'),
-(104, 'CPSC401', 'Machine Learning', 3, 'Computer Science'),
-(201, 'BIO101', 'General Biology I', 3, 'Biology'),
-(202, 'BIO201', 'Genetics', 3, 'Biology');
+INSERT INTO Course (id, code, name, credits, Department, Description) VALUES
+(101, 'CPSC101', 'Intro to Programming', 3, 'Computer Science','This is a short description meant to be replaced later'),
+(102, 'CPSC201', 'Data Structures', 4, 'Computer Science','This is a short description meant to be replaced later'),
+(103, 'CPSC301', 'Algorithms', 4, 'Computer Science','This is a short description meant to be replaced later'),
+(104, 'CPSC401', 'Machine Learning', 3, 'Computer Science','This is a short description meant to be replaced later'),
+(201, 'BIO101', 'General Biology I', 3, 'Biology','This is a short description meant to be replaced later'),
+(202, 'BIO201', 'Genetics', 3, 'Biology','This is a short description meant to be replaced later');
 
 -- Sections
 INSERT INTO Section (section_num, course_id, instructor, Capacity, Registered, Waitlist) VALUES
