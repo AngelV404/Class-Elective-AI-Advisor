@@ -4,7 +4,7 @@ from themes import *
 from WelcomePage import WelcomePage
 from registerFrame import RegisterFrame
 # from HelpFrame import HelpFrame
-# from PreferencesFrame import PreferencesFrame
+from PreferencesFrame import PreferenceFrame
 # from ProfileFrame import ProfileFrame
 # from RecommendedFrame import RecommendedFrame
 
@@ -63,8 +63,8 @@ class App(ctk.CTk):
         self.pages = {
             "Home": WelcomePage(self.mainArea),
             "Login": LoginFrame(self.mainArea, self),
-            "Register":RegisterFrame(self.mainArea, self)
-            # "Preferences": PreferencesFrame(self.mainArea),
+            "Register":RegisterFrame(self.mainArea, self),
+            "Preferences": PreferenceFrame(self.mainArea),
             # "Recommended": RecommendedFrame(self.mainArea),
             # "Profile": ProfileFrame(self.mainArea),
             # "Help": HelpFrame(self.mainArea)
