@@ -63,7 +63,7 @@ def build_form():
             messagebox.showinfo("Welcome", f"Welcome {result['user']['full_name']}!")
             print(result)
             root.destroy()
-            app = ui.gui.App()
+            app = ui.gui.App(email_entry.get())
             app.mainloop()
         except AuthError as e:
             messagebox.showerror("Login error", str(e))

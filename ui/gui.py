@@ -1,16 +1,17 @@
 import tkinter as tk
-from db import dbsetup
+from db import dbsetup, queries
 from .CourseFrame import *
 from .HomeFrame import HomeFrame
 # from HelpFrame import HelpFrame
 # from PreferencesFrame import PreferencesFrame
-# from ProfileFrame import ProfileFrame
+from .ProfileFrame import *
 # from RecommendedFrame import RecommendedFrame
 
 
 class App(tk.Tk):
-    def __init__(self):
+    def __init__(self, email):
         super().__init__()
+        self.user = queries.get_user(email)
 
         self.title("Class Advisor")
         self.geometry("800x600")
@@ -49,9 +50,10 @@ class App(tk.Tk):
             "CourseSearch": CourseSearchFrame(self.content, self),
             "Home": HomeFrame(self.content, self),
             "Courses": CourseFrame(self.content, self),
-            "Sections": SectionFrame(self.content, self)
+            "Sections": SectionFrame(self.content, self),
             # "Help": HelpFrame(self.content, self),
-            # "Profile": ProfileFrame(self.content, self),
+            "Profile": ProfileFrame(self.content, self),
+            "Saved": SavedFrame(self.content, self)
             # "Recommended": RecommendedFrame(self.content, self),
             # "Preferences": PreferencesFrame(self.content, self)
         }
@@ -73,5 +75,5 @@ class App(tk.Tk):
 #     app.mainloop()
 
 
-app = App()
+app = App('a@csu.fullerton.edu')
 app.mainloop()
