@@ -1,3 +1,4 @@
+"""
 import sqlite3, time, bcrypt
 from typing import Dict, Any, Optional
 from .auth_provider import AuthProvider, AuthError, validate_password, generate_jwt, validate_email_domain
@@ -16,7 +17,7 @@ class LocalAuthProvider(AuthProvider):
     def _init_db(self):
         conn = self._connect()
         cur = conn.cursor()
-        cur.execute("""
+        cur.execute(
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             full_name TEXT NOT NULL,
@@ -26,7 +27,7 @@ class LocalAuthProvider(AuthProvider):
             failed_attempts INTEGER DEFAULT 0,
             lockout_until INTEGER DEFAULT 0
         )
-        """)
+        )
         conn.commit()
         conn.close()
 
@@ -107,4 +108,4 @@ class LocalAuthProvider(AuthProvider):
                 "user": {"id": id_, "full_name": full_name, "email": email},
                 "tokens": {"access_token": generate_jwt({"sub": id_, "email": email})}
             }
-
+            """
