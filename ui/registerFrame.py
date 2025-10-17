@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from themes import *
+from ui.themes import *
 
 
 class RegisterFrame(ctk.CTkFrame):
@@ -96,12 +96,12 @@ class RegisterFrame(ctk.CTkFrame):
         self.submit_frame.grid_columnconfigure(1, weight=0)
 
         # cancel button
-        self.cancel_button = createButton(self.submit_frame, 'Cancel')
+        self.cancel_button = createButton(self.submit_frame, 'Cancel', command=lambda: self.controller.buttonClicked('Login'))
         self.cancel_button.grid(row=0, column=0, pady=20, padx=(0, 30))
 
         # register button
         self.register_button = createButton(
-            self.submit_frame, 'Register')
+            self.submit_frame, 'Register', command=lambda: self.controller.do_register(self))
         self.register_button.grid(row=0, column=1, padx=(0, 100))
 
         # login label
