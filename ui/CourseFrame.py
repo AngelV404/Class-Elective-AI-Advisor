@@ -22,9 +22,9 @@ class CourseSearchFrame(tk.Frame):
 
     def displaycourses(self):
         results = queries.get_courses(self.code_entry, self.name_entry)
-        Courses_frame = self.controller.frames["Courses"]
-        Courses_frame.update_results(results)
-        self.controller.show_frame("Courses")
+        self.controller.currentPage.pack_forget()
+        self.controller.pages["Courses"].update_results(results)
+        self.controller.buttonClicked("Courses")
 
 
 class CourseFrame(tk.Frame):
@@ -53,7 +53,7 @@ class CourseFrame(tk.Frame):
         self.scrollbar.pack(side="right", fill="y")
 
         # Back button
-        tk.Button(self, text="Back", command=lambda: controller.show_frame("CourseSearch")).pack(pady=10,padx = 10, side="left")
+        tk.Button(self, text="Back", command=lambda: controller.buttonClicked("Course Search")).pack(pady=10,padx = 10, side="left")
         
         tk.Label(self, text="Course Search").pack(pady=10,padx = 20, side="left")
 
@@ -72,9 +72,9 @@ class CourseFrame(tk.Frame):
 
     def displaysections(controller, id):
         results = queries.get_sections(id)
-        results_frame = controller.frames["Sections"]
-        results_frame.update_results(results)
-        controller.show_frame("Sections")
+        controller.currentPage.pack_forget()
+        controller.pages["Sections"].update_results(results)
+        controller.buttonClicked("Sections")
 
 class CourseBox(tk.Frame):
     def __init__(self, parent, controller, code, name, description, id):
@@ -149,7 +149,7 @@ class SectionFrame(tk.Frame):
         scrollbar.pack(side="right", fill="y")
 
         # Back button
-        tk.Button(self, text="Back", command=lambda: controller.show_frame("Courses")).pack(pady=10,padx = 10, side="left")
+        tk.Button(self, text="Back", command=lambda: controller.buttonClicked("Courses")).pack(pady=10,padx = 10, side="left")
         
     
     def update_results(self, results):

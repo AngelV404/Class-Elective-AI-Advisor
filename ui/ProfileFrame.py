@@ -12,20 +12,20 @@ class ProfileFrame(tk.Frame):
 
     def display_saved(self):
         results = queries.get_saved(self.controller.user)
-        Saved_frame = self.controller.frames["Saved"]
-        Saved_frame.update_results(results)
-        self.controller.show_frame("Saved")
+        self.controller.currentPage.pack_forget()
+        self.controller.pages["Saved"].update_results(results)
+        self.controller.buttonClicked("Saved")
 
 class SavedFrame(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="white")
         self.controller = controller
+
         # Header
-        
         top = tk.Frame(self, bg="white", bd = 2)
         top.pack(fill="both", expand=False, side="top")
 
-        tk.Button(top, text="Back", command=lambda: controller.show_frame("Profile")).pack(pady=10,padx = 10, side="left")
+        tk.Button(top, text="Back", command=lambda: controller.buttonClicked("Profile")).pack(pady=10,padx = 10, side="left")
         
         tk.Label(top, text="Saved Courses:", font=("Arial", 16), bg="white", bd=2).pack(pady=10,padx = 20, side="left")
         
@@ -50,7 +50,7 @@ class SavedFrame(tk.Frame):
         self.scrollbar.pack(side="right", fill="y", expand=False)
 
         self.right = tk.Frame(bottom, bg="white", bd = 2)
-        self.right.pack(fill="both", expand=True, side="left")
+        self.right.pack(fill="y", expand=False, side="left")
         
     
     def update_results(self, results):
@@ -62,7 +62,7 @@ class SavedFrame(tk.Frame):
         if not results:
             tk.Label(self.results_container, text = "Something went wrong :(").pack(fill="x", expand=True)
             return
-        
+
         for row in results:
             box = tk.Frame(self.results_container, bg="#f0f0f0", bd=2, relief="groove")
             box.grid_columnconfigure(1, weight=1)
@@ -109,11 +109,14 @@ class SavedFrame(tk.Frame):
             for i in range(len(prereqs)):
                 if prereqs[i][2] == 1:
                     self.prereq.insert("end", prereqs[i][0] + ' ' + prereqs[i][1], "green")
+                elif prereqs[i][2] == 2:
+                    self.prereq.insert("end", prereqs[i][0] + ' ' + prereqs[i][1], "yellow")
                 else:
                     self.prereq.insert("end", prereqs[i][0] + ' ' + prereqs[i][1], "red")
                 if i != len(prereqs) - 1:
                     self.prereq.insert("end", "\n")
             self.prereq.tag_configure("green", foreground="green")
+            self.prereq.tag_configure("yellow", foreground="#c2ab17")
             self.prereq.tag_configure("red", foreground="red")
         else:
             self.prereq.insert("end", "None")

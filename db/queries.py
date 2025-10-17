@@ -61,7 +61,7 @@ def get_prereq_status(course, user):
     try:
         con = sqlite3.connect("database.db")
         cursor = con.cursor()
-        query = f"SELECT c.code, c.name, CASE WHEN (t.status = 'taken' AND t.user_id = '{user}') THEN 1 ELSE 0 END AS fulfilled FROM Prerequisites p LEFT JOIN Course c ON c.id = p.prereq_id LEFT JOIN Taken t ON t.course_id = p.prereq_id WHERE p.course_id = '{course}'"
+        query = f"SELECT c.code, c.name, CASE WHEN (t.status = 'taken' AND t.user_id = '{user}') THEN 1 WHEN (t.status = 'in-progress' AND t.user_id = '{user}') THEN 2 ELSE 0 END AS fulfilled FROM Prerequisites p LEFT JOIN Course c ON c.id = p.prereq_id LEFT JOIN Taken t ON t.course_id = p.prereq_id WHERE p.course_id = '{course}'"
         cursor.execute(query)
         results = cursor.fetchall()
 

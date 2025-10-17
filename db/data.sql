@@ -338,8 +338,6 @@ INSERT INTO Taken (User_ID, Course_ID, Status) VALUES
 (5, 303, 'in-progress'),
 (5, 305, 'in-progress'),
 (5, 205, 'wishlist'),
-(5, 206, 'wishlist'),
-(5, 207, 'wishlist'),
 (5, 304, 'wishlist'),
 (5, 307, 'wishlist'),
 (5, 505, 'wishlist');
