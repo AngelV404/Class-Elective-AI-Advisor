@@ -8,6 +8,7 @@ load_dotenv(dotenv_path=Path(__file__).with_name(".env"))
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from auth.auth_provider import AuthError
+import ui.gui
 from auth.cognito_auth import CognitoAuthProvider
 
 # or pick provider by env var if you already have that logic

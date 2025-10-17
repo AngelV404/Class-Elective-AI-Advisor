@@ -1,17 +1,21 @@
 import customtkinter as ctk
-from LoginFrame import LoginFrame
-from themes import *
-from WelcomePage import WelcomePage
-from registerFrame import RegisterFrame
+from .LoginFrame import LoginFrame
+from .themes import *
+from .WelcomePage import WelcomePage
+from .registerFrame import RegisterFrame
+from db import dbsetup, queries
 # from HelpFrame import HelpFrame
-from PreferencesFrame import PreferenceFrame
-# from ProfileFrame import ProfileFrame
+from .PreferencesFrame import PreferenceFrame
+from .ProfileFrame import *
+from .CourseFrame import *
 # from RecommendedFrame import RecommendedFrame
 
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
+        self.user = queries.get_user('a@csu.fullerton.edu')
+        dbsetup.connectdb()
 
         self.title('Smart Elective Advisor')
         self.geometry('1100x700')
@@ -55,9 +59,10 @@ class App(ctk.CTk):
 
         self.sidebarButton('Login').grid(row=1, column=0, pady=(0, 20))
         self.sidebarButton('Preferences').grid(row=2, column=0, pady=(0, 20))
-        self.sidebarButton('Recommended').grid(row=3, column=0, pady=(0, 20))
-        self.sidebarButton('Profile').grid(row=4, column=0, pady=(0, 20))
-        self.sidebarButton('Help').grid(row=5, column=0)
+        self.sidebarButton('Course Search').grid(row=3, column=0, pady=(0, 20))
+        self.sidebarButton('Recommended').grid(row=4, column=0, pady=(0, 20))
+        self.sidebarButton('Profile').grid(row=5, column=0, pady=(0, 20))
+        self.sidebarButton('Help').grid(row=6, column=0)
 
         #pages
         self.pages = {
@@ -66,7 +71,11 @@ class App(ctk.CTk):
             "Register":RegisterFrame(self.mainArea, self),
             "Preferences": PreferenceFrame(self.mainArea),
             # "Recommended": RecommendedFrame(self.mainArea),
-            # "Profile": ProfileFrame(self.mainArea),
+            "Course Search": CourseSearchFrame(self.mainArea, self),
+            "Courses": CourseFrame(self.mainArea, self),
+            "Sections": SectionFrame(self.mainArea, self),
+            "Profile": ProfileFrame(self.mainArea, self),
+            "Saved": SavedFrame(self.mainArea, self)
             # "Help": HelpFrame(self.mainArea)
         }
 
@@ -110,6 +119,10 @@ class App(ctk.CTk):
         self.currentPage.pack(fill="both", expand=True, padx=3, pady=3)
 
 
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+# if __name__ == "__main__":
+#     app = App()
+#     app.mainloop()
+
+
+app = App()
+app.mainloop()

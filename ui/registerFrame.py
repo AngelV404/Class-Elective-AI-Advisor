@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from themes import *
+from .themes import *
 
 
 class RegisterFrame(ctk.CTkFrame):
