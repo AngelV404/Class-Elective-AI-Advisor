@@ -11,16 +11,13 @@ DROP TABLE IF EXISTS Course;
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Degree;
 DROP TABLE IF EXISTS Preferences;
-DROP TABLE IF EXISTS Preferences;
 
 -- =========================
 -- Degree Table
 -- =========================
 CREATE TABLE Degree (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Name VARCHAR(255) NOT NULL,
-    Level VARCHAR(255) NOT NULL,
     Level VARCHAR(255) NOT NULL,
     Dept VARCHAR(255)
 );
@@ -29,7 +26,6 @@ CREATE TABLE Degree (
 -- User Table
 -- =========================
 CREATE TABLE User (
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Username VARCHAR(255) NOT NULL UNIQUE,
     Email VARCHAR(255) NOT NULL UNIQUE,
@@ -46,9 +42,7 @@ CREATE TABLE User (
 -- =========================
 CREATE TABLE Course (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Code VARCHAR(10) NOT NULL UNIQUE,
-    Name VARCHAR(255) NOT NULL UNIQUE,
     Name VARCHAR(255) NOT NULL UNIQUE,
     Description TEXT,
     Credits INT,
@@ -67,7 +61,6 @@ CREATE TABLE Section (
     Instructor VARCHAR(255) NOT NULL,
     Capacity INT,
     Registered INT CHECK(Registered <= Capacity),
-    Registered INT CHECK(Registered <= Capacity),
     Waitlist INT,
     PRIMARY KEY (Section_num, Course_id),
     FOREIGN KEY (Course_id) REFERENCES Course(ID)
@@ -82,15 +75,11 @@ CREATE TABLE Timeslots (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Section_ID INT NOT NULL,
 	Course_ID INT NOT NULL,
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Section_ID INT NOT NULL,
-	Course_ID INT NOT NULL,
     Day VARCHAR(50),
     Start_Time TIME,
     End_Time TIME,
     Building VARCHAR(255),
     Room VARCHAR(255),
-    FOREIGN KEY (Section_ID, Course_ID) REFERENCES Section(Section_num, Course_id)
     FOREIGN KEY (Section_ID, Course_ID) REFERENCES Section(Section_num, Course_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
@@ -119,7 +108,6 @@ CREATE TABLE PreRequisites (
 -- =========================
 CREATE TABLE DG_Requirements (
     Req_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Req_ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Degree_ID INT NOT NULL,
     Course INT NOT NULL,
     Type VARCHAR(255),
@@ -139,7 +127,6 @@ CREATE INDEX idx_dg_req_degree ON DG_Requirements(Degree_ID);
 -- =========================
 CREATE TABLE GE_Requirements (
     Degree_ID INTEGER PRIMARY KEY,
-    Degree_ID INTEGER PRIMARY KEY,
     A_CR INT,
     B_CR INT,
     C_CR INT,
@@ -156,9 +143,7 @@ CREATE TABLE GE_Requirements (
 -- =========================
 CREATE TABLE Taken (
     User_ID INTEGER NOT NULL,
-    User_ID INTEGER NOT NULL,
     Course_ID INT NOT NULL,
-	Status VARCHAR(255) CHECK(status IN ('wishlist','taken', "in-progress")),
     PRIMARY KEY (User_ID, Course_ID),
     FOREIGN KEY (User_ID) REFERENCES User(ID)
         ON UPDATE CASCADE
@@ -171,19 +156,6 @@ CREATE TABLE Taken (
 -- Index for fast queries of all courses taken by a user
 CREATE INDEX idx_taken_user ON Taken(User_ID);
 CREATE INDEX idx_taken_course ON Taken(Course_ID);
-
--- =========================
--- Preferences Table
--- =========================
-CREATE TABLE Preferences (
-	User_ID INTEGER PRIMARY KEY,
-	Time varchar(255),
-	Days varchar(255),
-	FOREIGN KEY (User_ID) REFERENCES User(ID)
-		ON UPDATE CASCADE
-		ON DELETE CASCADE
-	
-);
 
 -- =========================
 -- Preferences Table
