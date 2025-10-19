@@ -1,99 +1,58 @@
 import os
 import sqlite3
-import dbtestqueries
+import dbtestqueries as dbq
 
 # Connect to db and generate a cursor
-try:
-    con = sqlite3.connect("test.db")
-    cursor = con.cursor()
-    print("connection successful")
-except sqlite3.Error as e:
-    print(f"Error connecting to database: {e}")
-
-# Find current working directory
-cwd = os.path.dirname(os.getcwd())
-print(cwd)
-
-# Open and run db setup file
-try:
-    with open(cwd+'/db/db.sql', 'r') as file:
-        script = file.read()
-    cursor.executescript(script)
-    con.commit()
-    print("Tables Created")
-except sqlite3.Error as e:
-    print(f"SQLite Error: {e}")
-except FileNotFoundError:
-    print("file not found")
-
-# Import test data into the db 
-try:
-    with open(cwd+'/db/data.sql', 'r') as file:
-        script = file.read()
-    cursor.executescript(script)
-    con.commit()
-    print("Data inputed")
-except sqlite3.Error as e:
-    print(f"SQLite Error: {e}")
-except FileNotFoundError:
-    print("file not found")
-
-con.execute("PRAGMA foreign_keys = ON;")
+def db_cursor():
+    try:
+        con = sqlite3.connect("test.db")
+        cursor = con.cursor()
+        con.execute("PRAGMA foreign_keys = ON;")
+        yield cursor
+    except sqlite3.Error as e:
+        print(f"Error connecting to database: {e}")
 
 # Test Case SV-01 and SV-02
 # EXPECTED: 10 distinct tables, 7 with Primary Keys, 3 with Composite Keys, 12 Foreign Keys
-print("\nTest Case SV-01 and SV-02")
-dbtestqueries.sv01_sv02(cursor)
+def test_sv01_sv02(db_cursor): dbq.sv01_sv02(db_cursor)
+
 
 # Test Case SV-03
 # EXPECTED: SQL Error UNIQUE constraint failed: User.Email
-print("\nTest Case SV-03")
-dbtestqueries.sv03(cursor)
+def test_sv03(db_cursor): dbq.sv03(db_cursor)
 
 # Test Case SV-04
 # EXPECTED: SQL Error NOT NUL constraint failed: Course.Name
-print("\nTest Case SV-04")
-dbtestqueries.sv04(cursor)
+def test_sv04(db_cursor): dbq.sv04(db_cursor)
 
 # Test Case DI-01
 # EXPECTED: SQL Error Foreign Key constraint failed
-print("\nTest Case DI-01")
-dbtestqueries.di01(cursor)
+def test_di01(db_cursor): dbq.di01(db_cursor)
 
 # Test Case DI-02
 # EXPECTED: SQL Error Unique Constraint failed
-print("\nTest Case DI-02")
-dbtestqueries.di02(cursor)
+def test_di02(db_cursor): dbq.di02(db_cursor)
 
 # Test Case DI-03
 # EXPECTED: SQL Error Check Constraint failed
-print("\nTest Case DI-03")
-dbtestqueries.di03(cursor)
+def test_di03(db_cursor): dbq.di03(db_cursor)
 
 # Test Case DI-04
 # EXPECTED: SQL Error Foreign Key constraint failed
-print("\nTest Case DI-04")
-dbtestqueries.di04(cursor)
+def test_di04(db_cursor): dbq.di04(db_cursor)
 
 # Test Case FT-01
 # EXPECTED: Table of all required courses for Computer Science Degree
-print("\nTest Case FT-01")
-dbtestqueries.ft01(cursor)
+def test_ft01(db_cursor): dbq.ft01(db_cursor)
 
 # Test Case FT-02
 # EXPECTED: Table of all users enrolled in CS301-01
-print("\nTest Case FT-02")
-dbtestqueries.ft02(cursor)
+# def test_ft01(db_cursor): dbq.ft02(db_cursor)
 
 # Test Case FT-03
 # EXPECTED: Table of all prerequisites for Biology courses
-print("\nTest Case FT-03")
-dbtestqueries.ft03(cursor)
+def test_ft03(db_cursor): dbq.ft03(db_cursor)
 
 # Test Case FT-04
 # EXPECTED: Table of all ge_requirements for each degree
-print("\nTest Case FT-04")
-dbtestqueries.ft04(cursor)
-
-if con:
-    con.close()
+def test_ft04(db_cursor): dbq.ft04(db_cursor)
