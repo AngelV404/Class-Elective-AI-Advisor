@@ -1,8 +1,9 @@
-import os
+import pytest
 import sqlite3
 import dbtestqueries as dbq
 
 # Connect to db and generate a cursor
+@pytest.fixture(scope="module")
 def db_cursor():
     try:
         con = sqlite3.connect("test.db")
