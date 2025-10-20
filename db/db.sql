@@ -145,6 +145,7 @@ CREATE TABLE Taken (
     User_ID INTEGER NOT NULL,
     Course_ID INT NOT NULL,
     PRIMARY KEY (User_ID, Course_ID),
+	Status VARCHAR(255) CHECK(status IN ('wishlist','taken', "in-progress")),
     FOREIGN KEY (User_ID) REFERENCES User(ID)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
