@@ -46,6 +46,8 @@ jobs:
         COGNITO_CLIENT_ID: "dummy-client-id"
         DISPLAY: ":99"
         PYTHONUNBUFFERED: 1
+        PYTHONPATH: .
+
       run: |
         sudo apt-get update
         sudo apt-get install -y xvfb
