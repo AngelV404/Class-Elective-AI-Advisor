@@ -37,7 +37,17 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        pytest -v --ignore=tests/gui_test.py
+
+    - name: Run GUI tests 
+      env:
+        AWS_REGION: "us-west-2"
+        COGNITO_USER_POOL_ID: "dummy-pool-id"
+        COGNITO_CLIENT_ID: "dummy-client-id"
+        DISPLAY: ":99"
+        PYTHONUNBUFFERED: 1
+      run: |
+        pytest -v tests/gui_test.py
 
   build:
     runs-on: windows-latest

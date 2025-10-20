@@ -57,8 +57,8 @@ class LoginFrame(ctk.CTkFrame):
         self.submit_frame.grid_columnconfigure(1, weight=0)
 
         # login button
-        login_button = createButton(self.submit_frame, 'Login', command=lambda: self.controller.do_login(self))
-        login_button.grid(row=0, column=1, pady=20, sticky='e')
+        self.login_button = createButton(self.submit_frame, 'Login', command=lambda: self.controller.do_login(self))
+        self.login_button.grid(row=0, column=1, pady=20, sticky='e')
 
         # register label
         self.register_label = createEntryLabel(
