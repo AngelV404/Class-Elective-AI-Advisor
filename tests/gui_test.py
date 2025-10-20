@@ -16,8 +16,12 @@ def setup_env(monkeypatch):
     monkeypatch.setenv("COGNITO_USER_POOL_ID", "dummy-pool-id")
     monkeypatch.setenv("COGNITO_CLIENT_ID", "dummy-client-id")
 
+    # Mock DB setup to avoid real file access
+    monkeypatch.setattr(queries, "get_user", lambda email: None)
+    monkeypatch.setattr(gui.dbsetup, "connectdb", lambda: None)
+
     # Prevent actual Tk window
-    
+
     monkeypatch.setattr(ctk.CTk, "mainloop", lambda self: None)
 
     # Replace CognitoAuthProvider with a dummy
