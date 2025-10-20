@@ -40,6 +40,16 @@ class LoginFrame(ctk.CTkFrame):
         self.password_entry.grid(row=1, column=1, sticky='w')
         self.password_entry.configure(show='*')
 
+        # warning label
+        self.warning_label = ctk.CTkLabel(
+            self.entry_frame,
+            text="",
+            text_color=AlertRed,
+            font=list_font,
+            fg_color=FullertonWhite
+        )
+        self.warning_label.grid(row=2, column=0, columnspan=2, sticky='w', padx=15, pady=(5, 0))
+
         # submit frame
         self.submit_frame = ctk.CTkFrame(self, fg_color=FullertonWhite)
         self.submit_frame.grid(row=2, column=1)
@@ -67,7 +77,7 @@ if __name__ == "__main__":
     root = ctk.CTk()
     root.geometry("800x600")
 
-    page = LoginFrame(root)
+    page = LoginFrame(root, controller=None)
     page.pack(fill="both", expand=True)
 
     root.mainloop()
