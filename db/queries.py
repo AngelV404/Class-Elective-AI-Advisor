@@ -76,7 +76,7 @@ def get_saved(user):
     try:
         con = sqlite3.connect("database.db")
         cursor = con.cursor()
-        query = f"SELECT c.code, c.name, t.status, c.id FROM Taken t LEFT JOIN Course c ON t.course_id = c.id WHERE user_id = '{user}' AND status != 'taken' UNION SELECT c.code, c.name, 'Degree Requirement' AS status, d.course FROM DG_Requirements d LEFT JOIN Course c ON d.course = c.id WHERE degree_id = (SELECT degree FROM user WHERE id = '{user}') AND d.course NOT IN (SELECT course_id FROM taken WHERE user_id = '{user}')"
+        query = f"SELECT c.code, c.name, t.status, c.id FROM Taken t LEFT JOIN Course c ON t.course_id = c.id WHERE user_id = '{user}' AND status = 'wishlist' UNION SELECT c.code, c.name, 'Degree Requirement' AS status, d.course FROM DG_Requirements d LEFT JOIN Course c ON d.course = c.id WHERE degree_id = (SELECT degree FROM user WHERE id = '{user}') AND d.course NOT IN (SELECT course_id FROM taken WHERE user_id = '{user}')"
         cursor.execute(query)
         results = cursor.fetchall()
 
