@@ -2,6 +2,9 @@ import pytest
 import customtkinter as ctk
 import sys
 import os
+import ui.gui as gui
+import db.queries as queries
+
 
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
