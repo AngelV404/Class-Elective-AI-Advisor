@@ -1,6 +1,9 @@
 import os
 import re
-import jwt
+try:
+    import jwt  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - optional dependency for tests
+    jwt = None  # type: ignore
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 

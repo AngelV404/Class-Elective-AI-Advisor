@@ -85,5 +85,12 @@ class CognitoAuthProvider(AuthProvider):
             self.client.confirm_sign_up(ClientId=self.client_id, Username=email, ConfirmationCode=code)
         except ClientError as e:
             raise AuthError(self._err(e))
+        
+    def resend_confirmation(self, email: str) -> None:
+        try:
+            self.client.resend_confirmation_code(ClientId=self.client_id, Username=email)
+        except ClientError as e:
+            raise AuthError(self._err(e))
+
 
     

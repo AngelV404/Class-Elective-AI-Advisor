@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from tkinter import messagebox, simpledialog
+from auth.cognito_auth import CognitoAuthProvider, AuthError
 from .LoginFrame import LoginFrame
 from .themes import *
 from .WelcomePage import WelcomePage
@@ -16,6 +18,8 @@ class App(ctk.CTk):
         super().__init__()
         self.user = queries.get_user('a@csu.fullerton.edu')
         dbsetup.connectdb()
+        self.provider = CognitoAuthProvider()
+        self.auth_tokens = None
 
         self.title('Smart Elective Advisor')
         self.geometry('1100x700')
@@ -80,8 +84,8 @@ class App(ctk.CTk):
         }
 
         # show welcome page
-        self.currentPage = self.pages['Home']
-        self.currentPage.pack(fill='both', expand=True, padx=3, pady=3)
+        self.currentPage = None
+        self.show_page('Home')
 
     def sidebarButton(self, name):
         new_button = ctk.CTkButton(
@@ -110,19 +114,73 @@ class App(ctk.CTk):
                 fg_color=FullertonWhite, hover_color=FullertonLightOrange)
             self.selectedButton = name
 
-        # hide current page
+        self.show_page(name)
+
+    def show_page(self, name):
         if self.currentPage is not None:
             self.currentPage.pack_forget()
 
-        # show selected page
-        self.currentPage = self.pages[name]
-        self.currentPage.pack(fill="both", expand=True, padx=3, pady=3)
+        frame = self.pages.get(name)
+        if frame is not None:
+            self.currentPage = frame
+            self.currentPage.pack(fill="both", expand=True, padx=3, pady=3)
+
+    # Actions called by frames
+    def do_register(self, frame):
+        full_name = frame.name_entry.get().strip()
+        email = frame.email_entry.get().strip()
+        password = frame.password_entry.get()
+        confirm = frame.confirm_entry.get()
+
+        frame.warning_label.configure(text="", text_color=FullertonWhite)
+
+        if password != confirm:
+            frame.warning_label.configure(text_color=AlertRed,
+                                          text="Passwords do not match.")
+            return
+        try:
+            msg = self.provider.register_user(full_name, email, password)
+            messagebox.showinfo("Verify", msg)
+
+            code = simpledialog.askstring(
+                "Confirm", f"Enter the 6-digit code sent to {email}")
+            if code:
+                self.provider.confirm_sign_up(email, code.strip())
+                messagebox.showinfo(
+                    "Confirmed", "Email verified. You can now log in.")
+                self.buttonClicked("Login")
+        except AuthError as e:
+            frame.warning_label.configure(text_color=AlertRed, text=str(e))
+
+    def do_resend_code(self, frame):
+        email = frame.email_entry.get().strip()
+        try:
+            self.provider.resend_confirmation(email)
+            messagebox.showinfo(
+                "Resent", f"Verification code resent to {email}.")
+        except AuthError as e:
+            frame.warning_label.configure(text_color=AlertRed, text=str(e))
+
+    def do_login(self, frame):
+        email = frame.email_entry.get().strip()
+        password = frame.password_entry.get()
+
+        if hasattr(frame, "warning_label"):
+            frame.warning_label.configure(text="", text_color=AlertRed)
+
+        try:
+            tokens = self.provider.authenticate_user(email, password)
+            self.auth_tokens = tokens
+            self.current_user_email = email
+            messagebox.showinfo("Welcome", f"Welcome {email}!")
+            self.buttonClicked("Home")
+        except AuthError as e:
+            if hasattr(frame, "warning_label"):
+                frame.warning_label.configure(text=str(e))
+            else:
+                messagebox.showerror("Login error", str(e))
 
 
-# if __name__ == "__main__":
-#     app = App()
-#     app.mainloop()
-
-
-app = App()
-app.mainloop()
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
