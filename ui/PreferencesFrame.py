@@ -1,6 +1,6 @@
 import customtkinter as ctk
-from themes import *
-from csuf_data import *
+from .themes import *
+from .csuf_data import *
 
 
 class PreferenceFrame(ctk.CTkFrame):
