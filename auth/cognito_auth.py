@@ -7,16 +7,6 @@ from botocore.exceptions import ClientError
 
 
 class CognitoAuthProvider(AuthProvider):
-    """
-    Desktop/Tkinter-friendly Cognito auth using direct API calls (no Hosted UI).
-    Flows:
-      - sign_up(email, password, name) -> confirmation email sent by Cognito
-      - confirm_sign_up(email, code)
-      - initiate_auth(email, password) -> tokens
-      - resend_confirmation_code(email)
-      - get_user_by_email(email) -> optional profile fetch
-    """
-
     def __init__(self):
         self.region = os.getenv("AWS_REGION")
         self.user_pool_id = os.getenv("COGNITO_USER_POOL_ID")
@@ -96,8 +86,4 @@ class CognitoAuthProvider(AuthProvider):
         except ClientError as e:
             raise AuthError(self._err(e))
 
-    def resend_confirmation_code(self, email: str) -> None:
-        try:
-            self.client.resend_confirmation_code(ClientId=self.client_id, Username=email)
-        except ClientError as e:
-            raise AuthError(self._err(e))
+    
