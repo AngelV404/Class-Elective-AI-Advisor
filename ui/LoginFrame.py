@@ -23,7 +23,7 @@ class LoginFrame(ctk.CTkFrame):
 
         # email label
         self.email_label = createEntryLabel(self.entry_frame, "Email:")
-        self.email_label.grid(row=0, column=0, sticky="e", padx=15, pady=10)
+        self.email_label.grid(row=0, column=0, sticky="e", padx=15, pady=20)
 
         # email entry box
         self.email_entry = createEntryBox(self.entry_frame)
@@ -33,7 +33,7 @@ class LoginFrame(ctk.CTkFrame):
         self.password_label = createEntryLabel(
             self.entry_frame, text='Password:')
         self.password_label.grid(
-            row=1, column=0, sticky='e', padx=15, pady=10)
+            row=1, column=0, sticky='e', padx=15, pady=(10,0))
 
         # password entry box
         self.password_entry = createEntryBox(self.entry_frame)
@@ -58,7 +58,7 @@ class LoginFrame(ctk.CTkFrame):
 
         # login button
         login_button = createButton(self.submit_frame, 'Login', command=lambda: self.controller.do_login(self))
-        login_button.grid(row=0, column=1, pady=20, sticky='e')
+        login_button.grid(row=0, column=1, pady=(0,20), sticky='e')
 
         # register label
         self.register_label = createEntryLabel(

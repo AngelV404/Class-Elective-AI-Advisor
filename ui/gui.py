@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox, simpledialog
-from auth.cognito_auth import CognitoAuthProvider, AuthError
+# from auth.cognito_auth import CognitoAuthProvider, AuthError
 from .LoginFrame import LoginFrame
 from .themes import *
 from .WelcomePage import WelcomePage
@@ -16,13 +16,13 @@ from .CourseFrame import *
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.user = queries.get_user('a@csu.fullerton.edu')
-        dbsetup.connectdb()
-        self.provider = CognitoAuthProvider()
-        self.auth_tokens = None
+        # self.user = queries.get_user('a@csu.fullerton.edu')
+        # dbsetup.connectdb()
+        # self.provider = CognitoAuthProvider()
+        # self.auth_tokens = None
 
         self.title('Smart Elective Advisor')
-        self.geometry('1100x700')
+        self.geometry('900x638')
         ctk.set_appearance_mode('light')
 
         ctk.set_default_color_theme('blue')
@@ -36,7 +36,7 @@ class App(ctk.CTk):
 
         # create sidebar frame
         self.sidebarFrame = ctk.CTkFrame(self,
-                                         width=250,
+                                         width=210,
                                          corner_radius=0,
                                          border_color=FullertonBlue,
                                          border_width=3)
@@ -57,15 +57,15 @@ class App(ctk.CTk):
         # create sidebar buttons
         self.selectedButton = 'Home'
         self.buttons = {}  # store a references to buttons
-        self.sidebarButton("Home").grid(row=0, column=0, pady=(0, 20))
+        self.sidebarButton("Home").grid(row=0, column=0, pady=(0, 13))
         self.buttons[self.selectedButton].configure(
             fg_color=FullertonOrange, hover_color=FullertonOrange)
 
-        self.sidebarButton('Login').grid(row=1, column=0, pady=(0, 20))
-        self.sidebarButton('Preferences').grid(row=2, column=0, pady=(0, 20))
-        self.sidebarButton('Course Search').grid(row=3, column=0, pady=(0, 20))
-        self.sidebarButton('Recommended').grid(row=4, column=0, pady=(0, 20))
-        self.sidebarButton('Profile').grid(row=5, column=0, pady=(0, 20))
+        self.sidebarButton('Login').grid(row=1, column=0, pady=(0, 13))
+        self.sidebarButton('Preferences').grid(row=2, column=0, pady=(0, 13))
+        self.sidebarButton('Course Search').grid(row=3, column=0, pady=(0, 13))
+        self.sidebarButton('Recommended').grid(row=4, column=0, pady=(0, 13))
+        self.sidebarButton('Profile').grid(row=5, column=0, pady=(0, 13))
         self.sidebarButton('Help').grid(row=6, column=0)
 
         #pages
@@ -91,9 +91,9 @@ class App(ctk.CTk):
         new_button = ctk.CTkButton(
             self.sidebarFrame,
             text=name,
-            height=100,
+            height=80,
             border_color=FullertonBlue,
-            width=230,
+            width=190,
             border_width=3,
             font=regular_font,
             text_color=FullertonBlue,
