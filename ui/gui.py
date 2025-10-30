@@ -10,7 +10,7 @@ from db import dbsetup, queries
 from .PreferencesFrame import PreferenceFrame
 from .ProfileFrame import *
 from .CourseFrame import *
-# from RecommendedFrame import RecommendedFrame
+from .RecommendedFrame import RecommendedFrame
 
 
 class App(ctk.CTk):
@@ -74,7 +74,7 @@ class App(ctk.CTk):
             "Login": LoginFrame(self.mainArea, self),
             "Register":RegisterFrame(self.mainArea, self),
             "Preferences": PreferenceFrame(self.mainArea),
-            # "Recommended": RecommendedFrame(self.mainArea),
+            "Recommended": RecommendedFrame(self.mainArea,self),
             "Course Search": CourseSearchFrame(self.mainArea, self),
             "Courses": CourseFrame(self.mainArea, self),
             "Sections": SectionFrame(self.mainArea, self),

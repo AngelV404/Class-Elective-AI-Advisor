@@ -12,7 +12,7 @@ FullertonLightOrange = '#FFDAB9'
 # Fonts
 heading_font = ("Encode Sans Expanded SemiBold", 32, "bold")
 regular_font = ("Encode Sans Expanded SemiBold", 16, "bold")
-list_font = ("Encode Sans Expanded SemiBold", 11, "bold")
+list_font = ("Encode Sans Expanded SemiBold", 13, "bold")
 
 
 def createEntryLabel(parent, text):
