@@ -10,7 +10,7 @@ from db import dbsetup, queries
 from .PreferencesFrame import PreferenceFrame
 from .ProfileFrame import *
 from .CourseFrame import *
-from .RecommendedFrame import RecommendedFrame
+# from .RecommendedFrame import RecommendedFrame
 
 
 class App(ctk.CTk):
@@ -52,6 +52,9 @@ class App(ctk.CTk):
                                      border_width=3)
         self.mainArea.grid(row=0, column=1, sticky='nsew')
         self.mainArea.configure(fg_color=FullertonWhite)
+        
+        self.mainArea.rowconfigure(0,weight=1)
+        self.mainArea.columnconfigure(0,weight=1)
 
 
         # create sidebar buttons
@@ -74,7 +77,7 @@ class App(ctk.CTk):
             "Login": LoginFrame(self.mainArea, self),
             "Register":RegisterFrame(self.mainArea, self),
             "Preferences": PreferenceFrame(self.mainArea),
-            "Recommended": RecommendedFrame(self.mainArea,self),
+            # "Recommended": RecommendedFrame(self.mainArea,self),
             "Course Search": CourseSearchFrame(self.mainArea, self),
             "Courses": CourseFrame(self.mainArea, self),
             "Sections": SectionFrame(self.mainArea, self),
@@ -82,6 +85,10 @@ class App(ctk.CTk):
             "Saved": SavedFrame(self.mainArea, self)
             # "Help": HelpFrame(self.mainArea)
         }
+        
+        for page in self.pages.values():
+            page.grid(row=0, column=0, sticky="nsew",padx=3,pady=3)
+            page.grid_remove()
 
         # show welcome page
         self.currentPage = None
@@ -118,12 +125,12 @@ class App(ctk.CTk):
 
     def show_page(self, name):
         if self.currentPage is not None:
-            self.currentPage.pack_forget()
+            self.currentPage.grid_remove()
 
         frame = self.pages.get(name)
         if frame is not None:
             self.currentPage = frame
-            self.currentPage.pack(fill="both", expand=True, padx=3, pady=3)
+            frame.grid()
 
     # Actions called by frames
     def do_register(self, frame):
