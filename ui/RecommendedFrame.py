@@ -1,10 +1,11 @@
 import customtkinter as ctk
-from themes import *
+from .themes import *
 
 
 class RecommendedFrame(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent,controller):
         super().__init__(parent, fg_color=FullertonWhite)
+        self.controller=controller
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=7)
         self.grid_columnconfigure(0, weight=1)
@@ -18,9 +19,9 @@ class RecommendedFrame(ctk.CTkFrame):
         self.main_frame.grid_columnconfigure(0, weight=1, uniform="equal")
         self.main_frame.grid_rowconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(1, weight=1, uniform="equal")
-
-        self.RecommendedCoursesFrame()
-        self.CourseDetailFrame()
+#------------------------------------------------------------------------#
+        self.RecommendedCoursesFrame()#left section
+        self.CourseDetailFrame()#right section
 
         self.subframes = {
             "explanation": self.ExplanationFrame(),
@@ -114,6 +115,7 @@ class RecommendedFrame(ctk.CTkFrame):
             self.detail_frame, text='Explanation / Options', font=regular_font)
         self.course_frame_title.grid(row=0, column=0, pady=10, sticky='we')
 
+#-------subframes--------------------
     def OptionsFrame(self):
         frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
         frame.grid(row=1, column=0, sticky='nswe')

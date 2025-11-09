@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox, simpledialog
-# from auth.cognito_auth import CognitoAuthProvider, AuthError
+from auth.cognito_auth import CognitoAuthProvider, AuthError
 from .LoginFrame import LoginFrame
 from .themes import *
 from .WelcomePage import WelcomePage
@@ -10,19 +10,19 @@ from db import dbsetup, queries
 from .PreferencesFrame import PreferenceFrame
 from .ProfileFrame import *
 from .CourseFrame import *
-# from .RecommendedFrame import RecommendedFrame
+from .RecommendedFrame import RecommendedFrame
 
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        # self.user = queries.get_user('a@csu.fullerton.edu')
-        # dbsetup.connectdb()
-        # self.provider = CognitoAuthProvider()
-        # self.auth_tokens = None
+        self.user = queries.get_user('a@csu.fullerton.edu')
+        dbsetup.connectdb()
+        self.provider = CognitoAuthProvider()
+        self.auth_tokens = None
 
         self.title('Smart Elective Advisor')
-        self.geometry('900x638')
+        self.geometry('1000x638')
         ctk.set_appearance_mode('light')
 
         ctk.set_default_color_theme('blue')
@@ -52,10 +52,9 @@ class App(ctk.CTk):
                                      border_width=3)
         self.mainArea.grid(row=0, column=1, sticky='nsew')
         self.mainArea.configure(fg_color=FullertonWhite)
-        
-        self.mainArea.rowconfigure(0,weight=1)
-        self.mainArea.columnconfigure(0,weight=1)
 
+        self.mainArea.rowconfigure(0, weight=1)
+        self.mainArea.columnconfigure(0, weight=1)
 
         # create sidebar buttons
         self.selectedButton = 'Home'
@@ -71,13 +70,13 @@ class App(ctk.CTk):
         self.sidebarButton('Profile').grid(row=5, column=0, pady=(0, 13))
         self.sidebarButton('Help').grid(row=6, column=0)
 
-        #pages
+        # pages
         self.pages = {
             "Home": WelcomePage(self.mainArea),
             "Login": LoginFrame(self.mainArea, self),
-            "Register":RegisterFrame(self.mainArea, self),
+            "Register": RegisterFrame(self.mainArea, self),
             "Preferences": PreferenceFrame(self.mainArea),
-            # "Recommended": RecommendedFrame(self.mainArea,self),
+            "Recommended": RecommendedFrame(self.mainArea, self),
             "Course Search": CourseSearchFrame(self.mainArea, self),
             "Courses": CourseFrame(self.mainArea, self),
             "Sections": SectionFrame(self.mainArea, self),
@@ -85,9 +84,9 @@ class App(ctk.CTk):
             "Saved": SavedFrame(self.mainArea, self)
             # "Help": HelpFrame(self.mainArea)
         }
-        
+
         for page in self.pages.values():
-            page.grid(row=0, column=0, sticky="nsew",padx=3,pady=3)
+            page.grid(row=0, column=0, sticky="nsew", padx=3, pady=3)
             page.grid_remove()
 
         # show welcome page
@@ -159,6 +158,24 @@ class App(ctk.CTk):
         except AuthError as e:
             frame.warning_label.configure(text_color=AlertRed, text=str(e))
 
+    def do_logout(self):
+        confirm = messagebox.askyesno(
+            "Logout", "Are you sure you want to log out?")
+        if confirm:
+            # TODO:Log out
+
+            messagebox.showinfo(
+                "Logged out", "You have been logged out successfully.")
+            
+            # Clear password fields
+            login_frame = self.pages.get("Login")
+            if login_frame:
+                login_frame.password_entry.delete(0, "end")
+
+            self.buttons["Login"].configure(
+                text="Login", command=lambda: self.buttonClicked("Login"))
+            self.buttonClicked("Login")
+
     def do_resend_code(self, frame):
         email = frame.email_entry.get().strip()
         try:
@@ -181,6 +198,10 @@ class App(ctk.CTk):
             self.current_user_email = email
             messagebox.showinfo("Welcome", f"Welcome {email}!")
             self.buttonClicked("Home")
+
+            self.buttons['Login'].configure(
+                text='Logout', command=self.do_logout)
+
         except AuthError as e:
             if hasattr(frame, "warning_label"):
                 frame.warning_label.configure(text=str(e))
