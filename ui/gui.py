@@ -6,7 +6,7 @@ from .themes import *
 from .WelcomePage import WelcomePage
 from .registerFrame import RegisterFrame
 from db import dbsetup, queries
-# from HelpFrame import HelpFrame
+from .HelpFrame import HelpFrame
 from .PreferencesFrame import PreferenceFrame
 from .ProfileFrame import *
 from .CourseFrame import *
@@ -81,8 +81,8 @@ class App(ctk.CTk):
             "Courses": CourseFrame(self.mainArea, self),
             "Sections": SectionFrame(self.mainArea, self),
             "Profile": ProfileFrame(self.mainArea, self),
-            "Saved": SavedFrame(self.mainArea, self)
-            # "Help": HelpFrame(self.mainArea)
+            "Saved": SavedFrame(self.mainArea, self),
+            "Help": HelpFrame(self.mainArea)
         }
 
         for page in self.pages.values():
