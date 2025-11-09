@@ -166,15 +166,15 @@ class App(ctk.CTk):
 
             messagebox.showinfo(
                 "Logged out", "You have been logged out successfully.")
-            
+
             # Clear password fields
             login_frame = self.pages.get("Login")
             if login_frame:
                 login_frame.password_entry.delete(0, "end")
-
-            self.buttons["Login"].configure(
-                text="Login", command=lambda: self.buttonClicked("Login"))
-            self.buttonClicked("Login")
+            if "Login" in self.buttons:
+                self.buttons["Login"].configure(
+                    text="Login", command=lambda: self.buttonClicked("Login"))
+                self.buttonClicked("Login")
 
     def do_resend_code(self, frame):
         email = frame.email_entry.get().strip()
@@ -199,8 +199,9 @@ class App(ctk.CTk):
             messagebox.showinfo("Welcome", f"Welcome {email}!")
             self.buttonClicked("Home")
 
-            self.buttons['Login'].configure(
-                text='Logout', command=self.do_logout)
+            if "Login" in self.buttons:
+                self.buttons["Login"].configure(
+                    text="Logout", command=self.do_logout)
 
         except AuthError as e:
             if hasattr(frame, "warning_label"):
