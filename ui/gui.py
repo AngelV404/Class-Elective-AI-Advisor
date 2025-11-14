@@ -7,7 +7,7 @@ from .WelcomePage import WelcomePage
 from .registerFrame import RegisterFrame
 from db import dbsetup, queries
 from .HelpFrame import HelpFrame
-from .PreferencesFrame import PreferenceFrame
+from .PreferencesFrame import PreferencesFrame
 from .ProfileFrame import *
 from .CourseFrame import *
 from .RecommendedFrame import RecommendedFrame
@@ -20,6 +20,7 @@ class App(ctk.CTk):
         dbsetup.connectdb()
         self.provider = CognitoAuthProvider()
         self.auth_tokens = None
+        self.is_logged_in = True #TODO:set is_logged_in to false
 
         self.title('Smart Elective Advisor')
         self.geometry('1000x638')
@@ -75,7 +76,7 @@ class App(ctk.CTk):
             "Home": WelcomePage(self.mainArea),
             "Login": LoginFrame(self.mainArea, self),
             "Register": RegisterFrame(self.mainArea, self),
-            "Preferences": PreferenceFrame(self.mainArea),
+            "Preferences": PreferencesFrame(self.mainArea),
             "Recommended": RecommendedFrame(self.mainArea, self),
             "Course Search": CourseSearchFrame(self.mainArea, self),
             "Courses": CourseFrame(self.mainArea, self),
@@ -113,23 +114,28 @@ class App(ctk.CTk):
         return new_button
 
     def buttonClicked(self, name):
-        if name in self.buttons and self.selectedButton != name:
-            self.buttons[name].configure(
-                fg_color=FullertonOrange, hover_color=FullertonOrange)
-            self.buttons[self.selectedButton].configure(
-                fg_color=FullertonWhite, hover_color=FullertonLightOrange)
-            self.selectedButton = name
+        if not self.is_logged_in and name not in ('Login', 'Home'):
+            messagebox.showinfo('','Please Login or Register to Continue')
+        else:
+            if name in self.buttons and self.selectedButton != name:
+                self.buttons[name].configure(
+                    fg_color=FullertonOrange, hover_color=FullertonOrange)
+                self.buttons[self.selectedButton].configure(
+                    fg_color=FullertonWhite, hover_color=FullertonLightOrange)
+                self.selectedButton = name
 
-        self.show_page(name)
+            self.show_page(name)
 
     def show_page(self, name):
-        if self.currentPage is not None:
-            self.currentPage.grid_remove()
 
-        frame = self.pages.get(name)
-        if frame is not None:
-            self.currentPage = frame
-            frame.grid()
+
+            if self.currentPage is not None:
+                self.currentPage.grid_remove()
+
+            frame = self.pages.get(name)
+            if frame is not None:
+                self.currentPage = frame
+                frame.grid()
 
     # Actions called by frames
     def do_register(self, frame):
@@ -198,6 +204,7 @@ class App(ctk.CTk):
             self.current_user_email = email
             messagebox.showinfo("Welcome", f"Welcome {email}!")
             self.buttonClicked("Home")
+            self.is_logged_in = True
 
             if "Login" in self.buttons:
                 self.buttons["Login"].configure(
