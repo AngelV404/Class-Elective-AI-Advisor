@@ -1,230 +1,139 @@
 import customtkinter as ctk
 from .themes import *
+from .components.course_list_frame import course_list_frame
+from .components.explanation_frame import explanation_frame
+from .components.share_advisor_frame import share_advisor_frame
 
 
 class RecommendedFrame(ctk.CTkFrame):
-    def __init__(self, parent,controller):
+    def __init__(self, parent, controller):
         super().__init__(parent, fg_color=FullertonWhite)
-        self.controller=controller
+        self.controller = controller
+
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=7)
         self.grid_columnconfigure(0, weight=1)
 
+        # title
         self.title = ctk.CTkLabel(
             self, text='Courses Recommended', font=heading_font)
         self.title.grid(row=0, column=0, sticky='we', pady=(25, 10))
 
+        # main frame (split layout)
         self.main_frame = ctk.CTkFrame(self, fg_color=FullertonWhite)
         self.main_frame.grid(row=1, column=0, sticky='nswe')
         self.main_frame.grid_columnconfigure(0, weight=1, uniform="equal")
-        self.main_frame.grid_rowconfigure(0, weight=1)
         self.main_frame.grid_columnconfigure(1, weight=1, uniform="equal")
-#------------------------------------------------------------------------#
-        self.RecommendedCoursesFrame()#left section
-        self.CourseDetailFrame()#right section
+        self.main_frame.grid_rowconfigure(0, weight=1)
 
-        self.subframes = {
-            "explanation": self.ExplanationFrame(),
-            "options": self.OptionsFrame(),
-            "saved": self.SavedFrame(),
-            "share": self.ShareFrame(),
-            "share_confirmation": self.SharedConfirmationFrame()
-        }
+        # left: recommended course list
+        self.course_list = course_list_frame(
+            self.main_frame, title='Recommended Courses')
+        self.course_list.grid(row=0, column=0, sticky='nswe')
 
-        self.current_subframe = None
-
-    def show_subframe(self, name):
-        if self.current_subframe is not None:
-            self.subframes[self.current_subframe].grid_remove()
-
-        self.subframes[name].grid()
-        self.current_subframe = name
-
-#helper
-    def create_course_card(self, title, unit, rating, prerequisite):
-        card = ctk.CTkFrame(self.card_frame, fg_color='#E8EEF3')
-        card.grid(sticky='nswe', pady=2)
-        card.grid_columnconfigure(0, weight=1)
-
-        title = ctk.CTkLabel(card, text=title, font=list_font)
-        title.grid(row=0, column=0, sticky='w', padx=3)
-
-        unit = ctk.CTkLabel(card, text=f"Units: {unit}",  font=list_font)
-        unit.grid(row=1, column=0, sticky='w', padx=3)
-
-        rating = ctk.CTkLabel(
-            card, text=f"Rating: {rating}/100", font=list_font)
-        rating.grid(row=2, column=0, sticky='w', padx=3)
-
-        prerequisite = ctk.CTkLabel(
-            card, text=f"Prerequisite: {prerequisite}", font=list_font)
-        prerequisite.grid(row=3, column=0, sticky='w', padx=3)
-
-        button_frame = ctk.CTkFrame(card, fg_color='#E8EEF3')
-        button_frame.grid(row=4, column=0, pady=20)
-
-        explanation = createButton(
-            button_frame, 'Explanation', lambda: self.show_subframe("explanation"))
-        explanation.grid(row=0, column=0, sticky='we', padx=20)
-
-        options = createButton(button_frame, 'Options',
-                               lambda: self.show_subframe("options"))
-        options.grid(row=0, column=1, sticky='we', padx=20)
-
-        return card
-
-    def RecommendedCoursesFrame(self):
-        self.course_frame = ctk.CTkFrame(
-            self.main_frame, fg_color=FullertonWhite)
-        self.course_frame.grid(row=0, column=0, sticky='nswe')
-        self.course_frame.grid_rowconfigure(0, weight=0)
-        self.course_frame.grid_rowconfigure(1, weight=10)
-        self.course_frame.grid_columnconfigure(0, weight=1)
-
-        self.course_frame_title = ctk.CTkLabel(
-            self.course_frame, text='Recommended Courses', font=regular_font)
-        self.course_frame_title.grid(
-            row=0, column=0, pady=(10, 0), sticky='we')
-
-        self.card_frame = ctk.CTkScrollableFrame(
-            self.course_frame, fg_color=FullertonWhite)
-        self.card_frame.grid(row=1, column=0, sticky='nswe')
-        self.card_frame.grid_columnconfigure(0, weight=1)
-
-        courseCard1 = self.create_course_card(
-            'Cloud Computing and Security (CPSC 454)', '3', '100', 'CPSC 351, CPSC 253f')
-        courseCard1.grid(row=0)
-
-        courseCard1 = self.create_course_card(
-            'Cloud Computing and Security (CPSC 454)', '3', '100', 'CPSC 351, CPSC 253f')
-        courseCard1.grid(row=1)
-
-        courseCard1 = self.create_course_card(
-            'Cloud Computing and Security (CPSC 454)', '3', '100', 'CPSC 351, CPSC 253f')
-        courseCard1.grid(row=2)
-
-    def CourseDetailFrame(self):
+        # right: course detail area
         self.detail_frame = ctk.CTkFrame(
             self.main_frame, fg_color=FullertonWhite)
         self.detail_frame.grid(row=0, column=1, sticky='nswe')
         self.detail_frame.grid_rowconfigure(0, weight=0)
-        self.detail_frame.grid_rowconfigure(1, weight=10)
+        self.detail_frame.grid_rowconfigure(1,weight=8)
         self.detail_frame.grid_columnconfigure(0, weight=1)
 
         self.course_frame_title = ctk.CTkLabel(
             self.detail_frame, text='Explanation / Options', font=regular_font)
         self.course_frame_title.grid(row=0, column=0, pady=10, sticky='we')
 
-#-------subframes--------------------
-    def OptionsFrame(self):
-        frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
-        frame.grid(row=1, column=0, sticky='nswe')
-        frame.grid_remove()
+        # subframes (right side)
+        self.subframes = {
+            "explanation": explanation_frame(self.detail_frame),
+            "options": self.create_options_frame(),
+            "saved": self.create_saved_frame(),
+            "share": share_advisor_frame(self.detail_frame,
+                                         email='eksud@csu.fullerton.edu',
+                                         on_share=lambda: self.show_subframe(
+                                             "share_confirmation"),
+                                         on_cancel=lambda: self.show_subframe("explanation")),
+            "share_confirmation": self.create_share_confirmation_frame()
+        }
 
+        self.current_subframe = None
+        self.show_subframe("explanation")
+
+        self.add_sample_courses()
+
+    def show_subframe(self, name):
+        if self.current_subframe:
+            self.subframes[self.current_subframe].grid_remove()
+        self.subframes[name].grid(row=1, column=0, sticky='nsew')
+        self.current_subframe = name
+
+    # sample filler
+    def add_sample_courses(self):
+        for i in range(3):
+            self.course_list.add_course_card(
+                title=f"Cloud Computing and Security (CPSC 454)",
+                unit='3',
+                rating='100',
+                prerequisite='CPSC 351, CPSC 253f',
+                on_explanation=lambda: self.show_subframe("explanation"),
+                on_options=lambda: self.show_subframe("options")
+            )
+
+    # ---------------------- modular detail frames ----------------------
+
+    def create_options_frame(self):
+        frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
+        
+        frame.grid_columnconfigure((0,2), weight=1)
+        frame.grid_columnconfigure(1,weight=3)
+        
         save_button = createButton(
             frame, 'Save Course', command=lambda: self.show_subframe("saved"))
-        save_button.grid(row=0, column=0, sticky='s', pady=10)
         save_button.configure(width=200)
+        save_button.grid(row=0, column=1, pady=(60, 10))
 
         share_button = createButton(
             frame, 'Share With Advisor', command=lambda: self.show_subframe("share"))
-        share_button.grid(row=1, column=0, sticky='n', pady=10)
         share_button.configure(width=200)
+        share_button.grid(row=1, column=1, pady=10)
 
-        frame.grid_rowconfigure(0, weight=1)
-        frame.grid_rowconfigure(3, weight=3)
-        frame.grid_columnconfigure(0, weight=15)
-        frame.grid_columnconfigure(2, weight=1)
-
-        return frame
-
-    def SavedFrame(self):
-        frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
-        frame.grid(row=1, column=0, sticky='nswe')
-        frame.grid_columnconfigure(0,weight=1)
         frame.grid_remove()
-
-        
-        title=ctk.CTkLabel(frame,text='Detail',font=list_font)
-        title.grid(row=0,column=0,sticky='nwe',pady=(0,10))
-
-        confirm_msg=ctk.CTkLabel(frame,text='Course Has Been Saved', font=list_font)
-        confirm_msg.grid(row=1,column=0,sticky='nswe',pady=10)
-
-        view_courses_button=createButton(frame,'View Saved Courses')
-        view_courses_button.configure(width=200)
-        view_courses_button.grid(row=2,column=0,sticky='ns',pady=10)
-
-        share_button=createButton(frame,'Share with Advisor',lambda:self.show_subframe('share'))
-        share_button.configure(width=200)
-        share_button.grid(row=3,column=0,sticky='ns',pady=10)        
-        
         return frame
 
-    def ShareFrame(self):
+    def create_saved_frame(self):
         frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
-        frame.grid(row=1, column=0, sticky='nswe')
-        frame.grid_remove()
-        frame.grid_columnconfigure(0,weight=1)
-        
-        title=ctk.CTkLabel(frame,text='Detail',font=list_font)
-        title.grid(row=0,column=0,sticky='nwe',pady=(0,10))
-
-        email='eksud@csu.fullerton.edu'
-        
-        label=ctk.CTkLabel(frame, text='Course will be shared with advisor', font=list_font)
-        email_label=ctk.CTkLabel(frame,text=email,font=list_font)
-        label.grid(row=1,column=0,sticky='nswe')
-        email_label.grid(row=2,column=0,sticky='nswe')
-        
-        share_button=createButton(frame,'Share',command=lambda:self.show_subframe('share_confirmation'))
-        share_button.configure(width=200)
-        share_button.grid(row=3,column=0,pady=(40,20))
-        
-        
-        cancel_button=createButton(frame,'Cancel',lambda:self.show_subframe('explanation'))
-        cancel_button.configure(width=200)
-        cancel_button.grid(row=4,column=0,pady=20)
-        
-        return frame
-
-    def SharedConfirmationFrame(self):
-        frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
-        frame.grid(row=1, column=0, sticky='nswe')
-        frame.grid_remove()
-        frame.grid_columnconfigure(0,weight=1)
-        
-        title=ctk.CTkLabel(frame,text='Detail',font=list_font)
-        title.grid(row=0,column=0,sticky='nwe',pady=(0,10))
-
-        email='eksud@csu.fullerton.edu'
-        
-        label=ctk.CTkLabel(frame, text='Course will be shared with advisor', font=list_font)
-        email_label=ctk.CTkLabel(frame,text=email,font=list_font)
-        label.grid(row=1,column=0,sticky='nswe')
-        email_label.grid(row=2,column=0,sticky='nswe')
-        
-        confirm=ctk.CTkLabel(frame,text='Your Course Has Been Sent',font=regular_font)
-        confirm.configure(text_color=AlertRed)
-        confirm.grid(row=3,column=0,pady=40)
-        
-        return frame
-
-    def ExplanationFrame(self):
-        frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
-        frame.grid(row=1, column=0, sticky="new")
         frame.grid_columnconfigure(0, weight=1)
-        frame.grid_rowconfigure(0, weight=1)
-        frame.grid_rowconfigure(1, weight=8)
 
-        explanation_title = ctk.CTkLabel(
-            frame, text='Explanation', font=list_font)
-        explanation_title.grid(row=0, column=0, sticky='nswe')
+        title = ctk.CTkLabel(frame, text='Detail', font=list_font)
+        title.grid(row=0, column=0, pady=(0, 10))
 
-        textbox = ctk.CTkTextbox(
-            frame, wrap="word", font=("Encode Sans Expanded SemiBold", 13), fg_color=FullertonWhite)
-        textbox.grid(row=1, column=0, sticky="nsew")
-        textbox.configure(state="disabled")
+        confirm_msg = ctk.CTkLabel(
+            frame, text='Course Has Been Saved', font=list_font)
+        confirm_msg.grid(row=1, column=0, pady=10)
+
+        view_btn = createButton(frame, 'View Saved Courses')
+        view_btn.configure(width=200)
+        view_btn.grid(row=2, column=0, pady=10)
+
+        share_btn = createButton(frame, 'Share with Advisor',
+                                 command=lambda: self.show_subframe('share'))
+        share_btn.configure(width=200)
+        share_btn.grid(row=3, column=0, pady=10)
+
+        frame.grid_remove()
+        return frame
+
+    def create_share_confirmation_frame(self):
+        frame = ctk.CTkFrame(self.detail_frame, fg_color=FullertonWhite)
+        frame.grid_columnconfigure(0, weight=1)
+
+        title = ctk.CTkLabel(frame, text='Detail', font=list_font)
+        title.grid(row=0, column=0, pady=(0, 10))
+
+        label = ctk.CTkLabel(
+            frame, text='Your Course Has Been Sent', font=regular_font)
+        label.configure(text_color=AlertRed)
+        label.grid(row=1, column=0, pady=40)
 
         frame.grid_remove()
         return frame
@@ -232,12 +141,8 @@ class RecommendedFrame(ctk.CTkFrame):
 
 if __name__ == "__main__":
     ctk.set_appearance_mode("light")
-    ctk.set_default_color_theme("blue")
-
     root = ctk.CTk()
-    root.geometry("800x600")
-
-    page = RecommendedFrame(root)
-    page.pack(fill="both", expand=True)
-
+    root.geometry("900x600")
+    app = RecommendedFrame(root, controller=None)
+    app.pack(fill="both", expand=True)
     root.mainloop()
