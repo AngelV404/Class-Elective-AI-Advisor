@@ -186,6 +186,7 @@ class PreferencesFrame(ctk.CTkFrame):
             "degree": self.degree_menu.get(),
             "preferred_job": self.preferred_job_entry.get(),
             "counselor_email": self.counselor_email_entry.get(),
+            "job_description":self.job_description_entry.get(),
         }
         self.controller.submit_preferences(data)
 

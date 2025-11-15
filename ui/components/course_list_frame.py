@@ -22,19 +22,19 @@ class course_list_frame(ctk.CTkFrame):
             self, fg_color=FullertonWhite)
         self.card_frame.grid(row=1, column=0, sticky='nswe')
         self.card_frame.grid_columnconfigure(0, weight=1)
-        
-        self.row_num=0
+
+        self.row_num = 0
 
     # remove all cards
     def clear(self):
         for widget in self.card_frame.winfo_children():
             widget.destroy()
-        self.row_num=0
+        self.row_num = 0
 
-    def add_course_card(self, title, unit, rating, prerequisite,
+    def add_course_card(self, name, code, unit, prerequisite,
                         on_explanation=None, on_options=None):
-        new_card = course_card(self.card_frame, title, unit,
-                               rating, prerequisite, on_explanation, on_options)
-        
+        new_card = course_card(self.card_frame, name, code, unit,
+                               prerequisite, on_explanation, on_options)
+
         new_card.grid(row=self.row_num, column=0, sticky='we')
-        self.row_num+=1
+        self.row_num += 1
