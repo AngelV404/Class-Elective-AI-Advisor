@@ -5,10 +5,10 @@ from controller.PreferencesController import *
 
 
 class PreferencesFrame(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, App):
         super().__init__(parent, fg_color=FullertonWhite)
 
-        self.controller = PreferencesController(self)
+        self.controller = PreferencesController(self,App)
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(2, weight=1)

@@ -27,7 +27,7 @@ class course_list_frame(ctk.CTkFrame):
 
     # remove all cards
     def clear(self):
-        for widget in self.scroll_frame.winfo_children():
+        for widget in self.card_frame.winfo_children():
             widget.destroy()
         self.row_num=0
 

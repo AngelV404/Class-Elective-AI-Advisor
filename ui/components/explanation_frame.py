@@ -19,8 +19,6 @@ class explanation_frame(ctk.CTkFrame):
         self.textbox.grid(row=1, column=0, sticky="nsew")
         self.textbox.configure(state="disabled")     
         
-        self.set_text('tesd sldk sdhfks ddddddddddssdfsssssssssssssssssssssjothsekjfhnuwhefuknwliuearhfiauslhtiulwehsalfiutahwue sdhfiwuefnuj sefh owna eui aikus huie aiwluer iuagg ')   
-
         
     def set_text(self,text):
         self.textbox.configure(state="normal")

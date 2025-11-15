@@ -2,8 +2,9 @@ from ui.csuf_data import *
 
 
 class PreferencesController:
-    def __init__(self, view):
+    def __init__(self, view, App):
         self.view = view
+        self.App = App
 
     # ----------Drop Down Menu Logic---------------------
     def on_college_selected(self, college):
@@ -49,3 +50,25 @@ class PreferencesController:
         self.view.hide_message()
         print(data)
         # TODO:save to db, sent to ai
+
+        ai_courses = [
+            {
+                "title": "CPSC 454 - Cloud Computing",
+                "unit": "3",
+                "rating": "97",
+                "prerequisite": "CPSC 351",
+                "explanation": "Learn about distributed systems and cloud security."
+            },
+            {
+                "title": "CPSC 483 - Machine Learning",
+                "unit": "3",
+                "rating": "95",
+                "prerequisite": "CPSC 335",
+                "explanation": "Covers supervised and unsupervised learning models."
+            }
+        ]
+
+        rec_page = self.App.pages["Recommended"]
+        rec_page.controller.set_recommendations(ai_courses)
+        rec_page.show_subframe(name=None)
+        self.App.buttonClicked('Recommended')
