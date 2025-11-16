@@ -16,8 +16,9 @@ from .RecommendedFrame import RecommendedFrame
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.user = queries.get_user('a@csu.fullerton.edu')
         dbsetup.connectdb()
+        self.user = queries.get_user('a@csu.fullerton.edu')
+        
         self.provider = CognitoAuthProvider()
         self.auth_tokens = None
         self.is_logged_in = True #TODO:set is_logged_in to false
