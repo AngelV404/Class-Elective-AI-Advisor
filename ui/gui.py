@@ -6,23 +6,25 @@ from .themes import *
 from .WelcomePage import WelcomePage
 from .registerFrame import RegisterFrame
 from db import dbsetup, queries
-# from HelpFrame import HelpFrame
-from .PreferencesFrame import PreferenceFrame
+from .HelpFrame import HelpFrame
+from .PreferencesFrame import PreferencesFrame
 from .ProfileFrame import *
 from .CourseFrame import *
-# from RecommendedFrame import RecommendedFrame
+from .RecommendedFrame import RecommendedFrame
 
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.user = queries.get_user('a@csu.fullerton.edu')
         dbsetup.connectdb()
+        self.user = queries.get_user('a@csu.fullerton.edu')
+        
         self.provider = CognitoAuthProvider()
         self.auth_tokens = None
+        self.is_logged_in = True #TODO:set is_logged_in to false
 
         self.title('Smart Elective Advisor')
-        self.geometry('1100x700')
+        self.geometry('1000x638')
         ctk.set_appearance_mode('light')
 
         ctk.set_default_color_theme('blue')
@@ -36,7 +38,7 @@ class App(ctk.CTk):
 
         # create sidebar frame
         self.sidebarFrame = ctk.CTkFrame(self,
-                                         width=250,
+                                         width=210,
                                          corner_radius=0,
                                          border_color=FullertonBlue,
                                          border_width=3)
@@ -53,35 +55,41 @@ class App(ctk.CTk):
         self.mainArea.grid(row=0, column=1, sticky='nsew')
         self.mainArea.configure(fg_color=FullertonWhite)
 
+        self.mainArea.rowconfigure(0, weight=1)
+        self.mainArea.columnconfigure(0, weight=1)
 
         # create sidebar buttons
         self.selectedButton = 'Home'
         self.buttons = {}  # store a references to buttons
-        self.sidebarButton("Home").grid(row=0, column=0, pady=(0, 20))
+        self.sidebarButton("Home").grid(row=0, column=0, pady=(0, 13))
         self.buttons[self.selectedButton].configure(
             fg_color=FullertonOrange, hover_color=FullertonOrange)
 
-        self.sidebarButton('Login').grid(row=1, column=0, pady=(0, 20))
-        self.sidebarButton('Preferences').grid(row=2, column=0, pady=(0, 20))
-        self.sidebarButton('Course Search').grid(row=3, column=0, pady=(0, 20))
-        self.sidebarButton('Recommended').grid(row=4, column=0, pady=(0, 20))
-        self.sidebarButton('Profile').grid(row=5, column=0, pady=(0, 20))
+        self.sidebarButton('Login').grid(row=1, column=0, pady=(0, 13))
+        self.sidebarButton('Preferences').grid(row=2, column=0, pady=(0, 13))
+        self.sidebarButton('Course Search').grid(row=3, column=0, pady=(0, 13))
+        self.sidebarButton('Recommended').grid(row=4, column=0, pady=(0, 13))
+        self.sidebarButton('Profile').grid(row=5, column=0, pady=(0, 13))
         self.sidebarButton('Help').grid(row=6, column=0)
 
-        #pages
+        # pages
         self.pages = {
             "Home": WelcomePage(self.mainArea),
             "Login": LoginFrame(self.mainArea, self),
-            "Register":RegisterFrame(self.mainArea, self),
-            "Preferences": PreferenceFrame(self.mainArea),
-            # "Recommended": RecommendedFrame(self.mainArea),
+            "Register": RegisterFrame(self.mainArea, self),
+            "Preferences": PreferencesFrame(self.mainArea,self),
+            "Recommended": RecommendedFrame(self.mainArea),
             "Course Search": CourseSearchFrame(self.mainArea, self),
             "Courses": CourseFrame(self.mainArea, self),
             "Sections": SectionFrame(self.mainArea, self),
             "Profile": ProfileFrame(self.mainArea, self),
-            "Saved": SavedFrame(self.mainArea, self)
-            # "Help": HelpFrame(self.mainArea)
+            "Saved": SavedFrame(self.mainArea, self),
+            "Help": HelpFrame(self.mainArea)
         }
+
+        for page in self.pages.values():
+            page.grid(row=0, column=0, sticky="nsew", padx=3, pady=3)
+            page.grid_remove()
 
         # show welcome page
         self.currentPage = None
@@ -91,9 +99,9 @@ class App(ctk.CTk):
         new_button = ctk.CTkButton(
             self.sidebarFrame,
             text=name,
-            height=100,
+            height=80,
             border_color=FullertonBlue,
-            width=230,
+            width=190,
             border_width=3,
             font=regular_font,
             text_color=FullertonBlue,
@@ -107,23 +115,28 @@ class App(ctk.CTk):
         return new_button
 
     def buttonClicked(self, name):
-        if name in self.buttons and self.selectedButton != name:
-            self.buttons[name].configure(
-                fg_color=FullertonOrange, hover_color=FullertonOrange)
-            self.buttons[self.selectedButton].configure(
-                fg_color=FullertonWhite, hover_color=FullertonLightOrange)
-            self.selectedButton = name
+        if not self.is_logged_in and name not in ('Login', 'Home'):
+            messagebox.showinfo('','Please Login or Register to Continue')
+        else:
+            if name in self.buttons and self.selectedButton != name:
+                self.buttons[name].configure(
+                    fg_color=FullertonOrange, hover_color=FullertonOrange)
+                self.buttons[self.selectedButton].configure(
+                    fg_color=FullertonWhite, hover_color=FullertonLightOrange)
+                self.selectedButton = name
 
-        self.show_page(name)
+            self.show_page(name)
 
     def show_page(self, name):
-        if self.currentPage is not None:
-            self.currentPage.pack_forget()
 
-        frame = self.pages.get(name)
-        if frame is not None:
-            self.currentPage = frame
-            self.currentPage.pack(fill="both", expand=True, padx=3, pady=3)
+
+            if self.currentPage is not None:
+                self.currentPage.grid_remove()
+
+            frame = self.pages.get(name)
+            if frame is not None:
+                self.currentPage = frame
+                frame.grid()
 
     # Actions called by frames
     def do_register(self, frame):
@@ -152,6 +165,24 @@ class App(ctk.CTk):
         except AuthError as e:
             frame.warning_label.configure(text_color=AlertRed, text=str(e))
 
+    def do_logout(self):
+        confirm = messagebox.askyesno(
+            "Logout", "Are you sure you want to log out?")
+        if confirm:
+            # TODO:Log out
+
+            messagebox.showinfo(
+                "Logged out", "You have been logged out successfully.")
+
+            # Clear password fields
+            login_frame = self.pages.get("Login")
+            if login_frame:
+                login_frame.password_entry.delete(0, "end")
+            if "Login" in self.buttons:
+                self.buttons["Login"].configure(
+                    text="Login", command=lambda: self.buttonClicked("Login"))
+                self.buttonClicked("Login")
+
     def do_resend_code(self, frame):
         email = frame.email_entry.get().strip()
         try:
@@ -174,6 +205,12 @@ class App(ctk.CTk):
             self.current_user_email = email
             messagebox.showinfo("Welcome", f"Welcome {email}!")
             self.buttonClicked("Home")
+            self.is_logged_in = True
+
+            if "Login" in self.buttons:
+                self.buttons["Login"].configure(
+                    text="Logout", command=self.do_logout)
+
         except AuthError as e:
             if hasattr(frame, "warning_label"):
                 frame.warning_label.configure(text=str(e))
