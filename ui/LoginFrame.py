@@ -55,10 +55,15 @@ class LoginFrame(ctk.CTkFrame):
         self.submit_frame.grid(row=2, column=1)
         self.submit_frame.grid_columnconfigure(0, weight=1)
         self.submit_frame.grid_columnconfigure(1, weight=0)
+        self.submit_frame.grid_columnconfigure(2, weight=0)
 
         # login button
         login_button = createButton(self.submit_frame, 'Login', command=lambda: self.controller.do_login(self))
         login_button.grid(row=0, column=1, pady=(0,20), sticky='e')
+
+        # forgot password button
+        forgot_button = createButton(self.submit_frame, 'Forgot Password', command=lambda: self.controller.do_forgot_password(self))
+        forgot_button.grid(row=0, column=0, pady=(0, 20), padx=(0, 10), sticky='w')
 
         # register label
         self.register_label = createEntryLabel(
@@ -69,6 +74,9 @@ class LoginFrame(ctk.CTkFrame):
         self.register_button = createButton(self.submit_frame, 'Register',command=lambda: self.controller.show_page("Register") )
         self.register_button.grid(row=1, column=1, sticky='e')
 
+        # change password button
+        change_password_button = createButton(self.submit_frame, 'Change Password', command=lambda: self.controller.do_change_password(self))
+        change_password_button.grid(row=2, column=0, padx=(0, 10), pady=(0, 10), sticky='w')
 
 if __name__ == "__main__":
     ctk.set_appearance_mode("light")

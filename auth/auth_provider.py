@@ -24,6 +24,15 @@ class AuthProvider:
     def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
         raise NotImplementedError
     
+    def start_password_reset(self, email: str) -> None:
+        raise NotImplementedError
+
+    def confirm_password_reset(self, email: str, code: str, new_password: str) -> None:
+        raise NotImplementedError
+
+    def change_password(self, access_token: str, previous_password: str, proposed_password: str) -> None:
+        raise NotImplementedError
+    
 def validate_email_domain(email: str) -> Optional[str]:
     """Ensure email belongs to csu.fullerton.edu domain."""
     if not email.lower().endswith("@csu.fullerton.edu"):

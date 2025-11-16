@@ -1,6 +1,6 @@
 import os
 from typing import Dict, Any, Optional
-from .auth_provider import AuthProvider, AuthError, validate_email_domain
+from .auth_provider import AuthProvider, AuthError, validate_email_domain, validate_password
 
 import boto3
 from botocore.exceptions import ClientError
@@ -89,6 +89,42 @@ class CognitoAuthProvider(AuthProvider):
     def resend_confirmation(self, email: str) -> None:
         try:
             self.client.resend_confirmation_code(ClientId=self.client_id, Username=email)
+        except ClientError as e:
+            raise AuthError(self._err(e))
+        
+    def start_password_reset(self, email: str) -> None:
+        err = validate_email_domain(email)
+        if err:
+            raise AuthError(err)
+        try:
+            self.client.forgot_password(ClientId=self.client_id, Username=email)
+        except ClientError as e:
+            raise AuthError(self._err(e))
+
+    def confirm_password_reset(self, email: str, code: str, new_password: str) -> None:
+        pw_err = validate_password(new_password)
+        if pw_err:
+            raise AuthError(pw_err)
+        try:
+            self.client.confirm_forgot_password(
+                ClientId=self.client_id,
+                Username=email,
+                ConfirmationCode=code,
+                Password=new_password,
+            )
+        except ClientError as e:
+            raise AuthError(self._err(e))
+
+    def change_password(self, access_token: str, previous_password: str, proposed_password: str) -> None:
+        pw_err = validate_password(proposed_password)
+        if pw_err:
+            raise AuthError(pw_err)
+        try:
+            self.client.change_password(
+                AccessToken=access_token,
+                PreviousPassword=previous_password,
+                ProposedPassword=proposed_password,
+            )
         except ClientError as e:
             raise AuthError(self._err(e))
 

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox, simpledialog
 from auth.cognito_auth import CognitoAuthProvider, AuthError
+from auth.auth_provider import validate_password
 from .LoginFrame import LoginFrame
 from .themes import *
 from .WelcomePage import WelcomePage
@@ -21,7 +22,7 @@ class App(ctk.CTk):
         
         self.provider = CognitoAuthProvider()
         self.auth_tokens = None
-        self.is_logged_in = True #TODO:set is_logged_in to false
+        self.is_logged_in = False
 
         self.title('Smart Elective Advisor')
         self.geometry('1000x638')
@@ -169,7 +170,10 @@ class App(ctk.CTk):
         confirm = messagebox.askyesno(
             "Logout", "Are you sure you want to log out?")
         if confirm:
-            # TODO:Log out
+            self.auth_tokens = None
+            self.current_user_email = None
+            self.is_logged_in = False
+            self.user = None
 
             messagebox.showinfo(
                 "Logged out", "You have been logged out successfully.")
@@ -178,10 +182,13 @@ class App(ctk.CTk):
             login_frame = self.pages.get("Login")
             if login_frame:
                 login_frame.password_entry.delete(0, "end")
+                login_frame.email_entry.delete(0, "end")
             if "Login" in self.buttons:
                 self.buttons["Login"].configure(
                     text="Login", command=lambda: self.buttonClicked("Login"))
-                self.buttonClicked("Login")
+                
+            self.selectedButton = "Login"
+            self.buttonClicked("Login")
 
     def do_resend_code(self, frame):
         email = frame.email_entry.get().strip()
@@ -191,6 +198,67 @@ class App(ctk.CTk):
                 "Resent", f"Verification code resent to {email}.")
         except AuthError as e:
             frame.warning_label.configure(text_color=AlertRed, text=str(e))
+
+    def do_forgot_password(self, frame):
+        email = frame.email_entry.get().strip()
+        if not email:
+            messagebox.showerror("Missing email", "Please enter your email to reset your password.")
+            return
+        try:
+            self.provider.start_password_reset(email)
+            messagebox.showinfo("Password reset", f"A verification code was sent to {email}.")
+            code = simpledialog.askstring("Reset Code", "Enter the verification code from your email:")
+            if not code:
+                return
+            new_password = simpledialog.askstring("New Password", "Enter your new password:", show='*')
+            if not new_password:
+                return
+            confirm_password = simpledialog.askstring("Confirm Password", "Confirm your new password:", show='*')
+            if new_password != confirm_password:
+                messagebox.showerror("Mismatch", "Passwords do not match.")
+                return
+            err = validate_password(new_password)
+            if err:
+                messagebox.showerror("Invalid password", err)
+                return
+            self.provider.confirm_password_reset(email, code.strip(), new_password)
+            messagebox.showinfo("Updated", "Your password has been reset. Please log in.")
+            self.buttonClicked("Login")
+        except AuthError as e:
+            messagebox.showerror("Reset failed", str(e))
+
+    def do_change_password(self, frame=None):
+        if not self.is_logged_in or not self.auth_tokens:
+            messagebox.showinfo("Login required", "Please log in before changing your password.")
+            self.buttonClicked("Login")
+            return
+
+        access_token = self.auth_tokens.get("tokens", {}).get("AccessToken")
+        if not access_token:
+            messagebox.showerror("Unavailable", "Unable to change password without an access token.")
+            return
+
+        current_password = simpledialog.askstring("Current Password", "Enter your current password:", show='*')
+        if not current_password:
+            return
+        new_password = simpledialog.askstring("New Password", "Enter your new password:", show='*')
+        if not new_password:
+            return
+        confirm_password = simpledialog.askstring("Confirm Password", "Confirm your new password:", show='*')
+        if new_password != confirm_password:
+            messagebox.showerror("Mismatch", "Passwords do not match.")
+            return
+
+        err = validate_password(new_password)
+        if err:
+            messagebox.showerror("Invalid password", err)
+            return
+
+        try:
+            self.provider.change_password(access_token, current_password, new_password)
+            messagebox.showinfo("Success", "Password changed successfully.")
+        except AuthError as e:
+            messagebox.showerror("Change failed", str(e))
 
     def do_login(self, frame):
         email = frame.email_entry.get().strip()
@@ -203,6 +271,10 @@ class App(ctk.CTk):
             tokens = self.provider.authenticate_user(email, password)
             self.auth_tokens = tokens
             self.current_user_email = email
+            try:
+                self.user = queries.get_user(email)
+            except Exception:
+                self.user = None
             messagebox.showinfo("Welcome", f"Welcome {email}!")
             self.buttonClicked("Home")
             self.is_logged_in = True
