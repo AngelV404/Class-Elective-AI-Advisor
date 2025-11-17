@@ -27,11 +27,16 @@ class DummyLabel:
 
 
 class DummyProvider:
-    def __init__(self, tokens=None, error=None):
+    def __init__(self, tokens=None, error=None, reset_error=None, change_error=None):
         self.tokens = tokens or {"tokens": {"AccessToken": "token"}}
         self.error = error
+        self.reset_error = reset_error
+        self.change_error = change_error
         self.auth_calls = []
         self.resend_calls = []
+        self.reset_calls = []
+        self.confirm_calls = []
+        self.change_calls = []
 
     def authenticate_user(self, email, password):
         self.auth_calls.append((email, password))
@@ -42,6 +47,20 @@ class DummyProvider:
     def resend_confirmation(self, email):
         self.resend_calls.append(email)
 
+    def start_password_reset(self, email):
+        self.reset_calls.append(email)
+        if self.reset_error:
+            raise self.reset_error
+
+    def confirm_password_reset(self, email, code, new_password):
+        self.confirm_calls.append((email, code, new_password))
+        if self.reset_error:
+            raise self.reset_error
+
+    def change_password(self, token, old_password, new_password):
+        self.change_calls.append((token, old_password, new_password))
+        if self.change_error:
+            raise self.change_error
 
 @pytest.fixture
 def app(monkeypatch):
@@ -97,3 +116,36 @@ def test_do_resend_code_forwards_to_provider(app):
     )
     app.do_resend_code(frame)
     assert provider.resend_calls == ["student@csu.fullerton.edu"]
+
+
+def test_do_forgot_password_requests_and_confirms(monkeypatch, app):
+    provider = DummyProvider()
+    app.provider = provider
+    responses = iter(["123456", "Newpass1", "Newpass1"])
+    monkeypatch.setattr("ui.gui.simpledialog.askstring", lambda *args, **kwargs: next(responses))
+    monkeypatch.setattr("ui.gui.messagebox.showinfo", lambda *args, **kwargs: None)
+    monkeypatch.setattr("ui.gui.messagebox.showerror", lambda *args, **kwargs: None)
+
+    frame = SimpleNamespace(
+        email_entry=DummyEntry("student@csu.fullerton.edu"),
+        warning_label=DummyLabel(),
+    )
+    app.do_forgot_password(frame)
+
+    assert provider.reset_calls == ["student@csu.fullerton.edu"]
+    assert provider.confirm_calls == [("student@csu.fullerton.edu", "123456", "Newpass1")]
+
+
+def test_do_change_password_uses_access_token(monkeypatch, app):
+    provider = DummyProvider()
+    app.provider = provider
+    app.auth_tokens = {"tokens": {"AccessToken": "token"}}
+    app.is_logged_in = True
+    responses = iter(["Oldpass1", "Newpass1", "Newpass1"])
+    monkeypatch.setattr("ui.gui.simpledialog.askstring", lambda *args, **kwargs: next(responses))
+    monkeypatch.setattr("ui.gui.messagebox.showinfo", lambda *args, **kwargs: None)
+    monkeypatch.setattr("ui.gui.messagebox.showerror", lambda *args, **kwargs: None)
+
+    app.do_change_password()
+
+    assert provider.change_calls == [("token", "Oldpass1", "Newpass1")]
