@@ -28,13 +28,37 @@ def connectdb():
     except FileNotFoundError:
         print("Setup File not found")
 
-    # Import data into the db 
+    # Import degree and course data into the db 
     try:
         with open('./db/data.sql', 'r') as file:
             script = file.read()
         cursor.executescript(script)
         con.commit()
-        print("Data inputed")
+        print("Course Data inputed")
+    except sqlite3.Error as e:
+        print(f"SQLite Error: {e}")
+    except FileNotFoundError:
+        print("Data file not found")
+
+    # Import requirements data into db
+    try:
+        with open('./db/requirements.sql', 'r') as file:
+            script = file.read()
+        cursor.executescript(script)
+        con.commit()
+        print("Requirements Data inputed")
+    except sqlite3.Error as e:
+        print(f"SQLite Error: {e}")
+    except FileNotFoundError:
+        print("Data file not found")
+
+    # Import user data into db
+    try:
+        with open('./db/users.sql', 'r') as file:
+            script = file.read()
+        cursor.executescript(script)
+        con.commit()
+        print("User Data inputed")
     except sqlite3.Error as e:
         print(f"SQLite Error: {e}")
     except FileNotFoundError:

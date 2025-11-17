@@ -1,13 +1,14 @@
 import customtkinter as ctk
 from .themes import *
 from .csuf_data import *
+from db import queries
 from controller.PreferencesController import *
 
 
 class PreferencesFrame(ctk.CTkFrame):
     def __init__(self, parent, App):
         super().__init__(parent, fg_color=FullertonWhite)
-
+        self.user = App.user
         self.controller = PreferencesController(self,App)
 
         self.grid_columnconfigure(0, weight=1)
@@ -189,6 +190,8 @@ class PreferencesFrame(ctk.CTkFrame):
             "job_description":self.job_description_entry.get(),
         }
         self.controller.submit_preferences(data)
+        queries.change_degree(self.user, self.degree_menu)
+
 
     def show_message(self, msg):
         self.warning_msg.configure(text=msg)

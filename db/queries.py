@@ -101,3 +101,17 @@ def get_course_details(course):
         cursor.close()
         con.close()
         return results
+    
+def change_degree(user, degree):
+    try:
+        con = sqlite3.connect("database.db")
+        cursor = con.cursor()
+        query = f"UPDATE 'User' SET Degree = (SELECT ID FROM Degree WHERE Name = '{degree.get()}') WHERE ID = {user}"
+        cursor.execute(query)
+        con.commit()
+        print("success")
+    except sqlite3.Error as e:
+        print(f"SQL Error: {e}")
+    finally:
+        cursor.close()
+        con.close()
