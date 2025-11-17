@@ -6,15 +6,53 @@ class ProfileFrame(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="white")
         self.controller = controller
-        tk.Label(self, text="User Profile").pack(pady=20)
+        tk.Label(self, text="User Profile", font=("Arial", 18)).pack(pady=(30, 10))
 
-        tk.Button(self, text="View Saved Courses", command=self.display_saved).pack()
+        tk.Button(self, text="View Saved Courses", command=self.display_saved).pack(pady=(0, 15))
+
+        account_link = tk.Label(self, text="Account details", fg="#1a73e8", cursor="hand2", font=("Arial", 10, "underline"), bg="white")
+        account_link.pack()
+        account_link.bind("<Button-1>", lambda _event: self.open_account_details())
+
+    def open_account_details(self):
+        account_page = self.controller.pages.get("Account Details")
+        if account_page:
+            account_page.refresh_email(getattr(self.controller, "current_user_email", None))
+        self.controller.buttonClicked("Account Details")
 
     def display_saved(self):
         results = queries.get_saved(self.controller.user)
-        self.controller.currentPage.pack_forget()
+        if self.controller.currentPage:
+            self.controller.currentPage.grid_remove()
         self.controller.pages["Saved"].update_results(results)
         self.controller.buttonClicked("Saved")
+
+class AccountDetailsFrame(tk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, bg="white")
+        self.controller = controller
+
+        top = tk.Frame(self, bg="white")
+        top.pack(fill="x", pady=(10, 20))
+
+        tk.Button(top, text="Back", command=lambda: controller.buttonClicked("Profile")).pack(side="left", padx=10)
+        tk.Label(top, text="Account Details", font=("Arial", 16), bg="white").pack(side="left", padx=10)
+
+        info = tk.Frame(self, bg="white")
+        info.pack(pady=(0, 20))
+
+        tk.Label(info, text="Email:", font=("Arial", 12, "bold"), bg="white").grid(row=0, column=0, sticky="e", padx=5)
+        self.email_value = tk.Label(info, text="", font=("Arial", 12), bg="white")
+        self.email_value.grid(row=0, column=1, sticky="w")
+
+        change_password = tk.Button(self, text="Change Password", command=lambda: controller.do_change_password(self))
+        change_password.pack(pady=(0, 10))
+
+    def refresh_email(self, email):
+        if email:
+            self.email_value.configure(text=email)
+        else:
+            self.email_value.configure(text="Unavailable")
 
 class SavedFrame(tk.Frame):
     def __init__(self, parent, controller):

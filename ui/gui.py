@@ -84,6 +84,7 @@ class App(ctk.CTk):
             "Courses": CourseFrame(self.mainArea, self),
             "Sections": SectionFrame(self.mainArea, self),
             "Profile": ProfileFrame(self.mainArea, self),
+            "Account Details": AccountDetailsFrame(self.mainArea, self),
             "Saved": SavedFrame(self.mainArea, self),
             "Help": HelpFrame(self.mainArea)
         }
@@ -154,7 +155,10 @@ class App(ctk.CTk):
             return
         try:
             msg = self.provider.register_user(full_name, email, password)
-            messagebox.showinfo("Verify", msg)
+            messagebox.showinfo(
+                "Verify",
+                msg.get("message") if isinstance(msg, dict) else str(msg)
+            )
 
             code = simpledialog.askstring(
                 "Confirm", f"Enter the 6-digit code sent to {email}")
